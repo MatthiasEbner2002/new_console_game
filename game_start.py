@@ -28,6 +28,9 @@ def main(screen):
     
     size: Size = Size.from_terminal_size(screen=screen)
 
+    while True:
+        size.update_terminal_size_with_logging_and_screen_refresh()
+        time.sleep(1)
 
 if __name__ == '__main__':
     curses.wrapper(main)
