@@ -39,7 +39,7 @@ def main(screen):
     add_logging()
     
     game_level_1: Game_Level_1 = Game_Level_1(screen)
-    
+    logging.debug(type(screen))
     game_level_1.run()
 
     
