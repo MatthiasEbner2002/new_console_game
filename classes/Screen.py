@@ -111,10 +111,11 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
 
 
 def add_angle_to_playfield(screen: curses.window, size: Size, angle):
-    angle_x_middle = size.get_x_for_angle() + 1
-    angle_y_middle = size.get_y_for_angle() + 10
+    angle_x_middle = size.get_x_for_angle()
+    angle_y_middle = size.get_y_for_angle()
 
     # Calculate the end coordinates based on the angle
+    angle = 360 - angle  # Rotate the angle 180 degrees
     angle_in_radians = math.radians(angle)
     radius_x = 7  # Half the width of the circle (16 characters / 2 = 8 characters)
     radius_y = 4  # Half the height of the circle (8 characters / 2 = 4 characters)
@@ -123,13 +124,30 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle):
 
     # Draw the line
     screen.addch(angle_x_middle, angle_y_middle, 'o')  # Mark the middle point with 'O'
-    screen.addch(end_y, end_x, 'X')  # Draw the line to the end point with 'X'
-    draw_line(screen, angle_y_middle, angle_x_middle, end_y, end_x)  # Draw a line between the two points
+    draw_line(screen, angle_y_middle, angle_x_middle, end_x, end_y, abs(angle - 360))  # Draw a line between the two points
+    screen.addch(end_y, end_x, get_arrow_direction(abs(angle - 360)))  # Draw the line to the end point with 'X'
+
+    # Calculate the angle value
+    angle_text = f"Angle: {abs(angle - 360)}°"
+
+    # Write the angle text
+    screen.addstr(angle_x_middle + 4, 11, angle_text)  # Adjusted the position for clarity
 
 
+
+
+def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximum: int):
+        x = size.get_x_for_progress_bar()
+        y = size.get_y_for_progress_bar()
+        progress = value * 100 // maximum
+        filled_length = value * 20 // maximum
+        empty_length = 20 - filled_length
+        screen.addstr(x, y, str(value) + "p [" + "=" * filled_length + " " * empty_length + "]")
+
+  
 
 # Bresenham's line algorithm.
-def draw_line(screen: curses.window, x1, y1, x2, y2):
+def draw_line(screen: curses.window, x1, y1, x2, y2, angle):
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
     sx = 1 if x1 < x2 else -1
@@ -137,7 +155,7 @@ def draw_line(screen: curses.window, x1, y1, x2, y2):
     err = dx - dy
 
     while True:
-        screen.addch(y1, x1, 'X')
+        screen.addch(y1, x1, get_arrow_line(angle))
 
         if x1 == x2 and y1 == y2:
             break
@@ -150,3 +168,15 @@ def draw_line(screen: curses.window, x1, y1, x2, y2):
             err += dx
             y1 += sy
 
+
+def get_arrow_line(angle):
+        normalized_angle = angle % 360
+        index = round(normalized_angle / 45) % 8
+        arrows = ['─', '/', '|', '\\', '─', '/', '|', '\\']
+        return arrows[index]
+    
+def get_arrow_direction(angle):
+        normalized_angle = angle % 360
+        index = round(normalized_angle / 45) % 8
+        arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
+        return arrows[index]

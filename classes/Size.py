@@ -175,13 +175,27 @@ class Size:
         """
         
         """
-        return self.get_x() + self.menu_x_size // 2
+        return self.get_x() + (self.menu_x_size // 2) + 1
     
     def get_y_for_angle(self):
         """
         
         """
-        return self.get_y_start() + self.menu_x_size // 2
+        return self.get_y_start() + (self.menu_x_size // 2) + 10
+    
+    
+    def get_x_for_progress_bar(self):
+        """
+        
+        """
+        return self.get_x_for_angle()
+    
+    def get_y_for_progress_bar(self):
+        """
+        
+        """
+        return self.get_y_for_angle() + 20
+    
     
     def toLogging(self):
         """
