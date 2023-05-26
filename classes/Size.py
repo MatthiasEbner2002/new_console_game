@@ -161,6 +161,8 @@ class Size:
         """
         return self.x
     
+    
+    
     def get_y_for_border(self):
         """ returns y for border, the biggest y possible
 
@@ -169,6 +171,17 @@ class Size:
         """
         return self.y
     
+    def get_x_for_angle(self):
+        """
+        
+        """
+        return self.get_x() + self.menu_x_size // 2
+    
+    def get_y_for_angle(self):
+        """
+        
+        """
+        return self.get_y_start() + self.menu_x_size // 2
     
     def toLogging(self):
         """

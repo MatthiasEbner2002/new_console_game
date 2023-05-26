@@ -1,4 +1,4 @@
-import logging
+import logging, math
 import curses
 
 from classes.Size import Size
@@ -104,7 +104,49 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
     
     x_start, y_start, x, y = playfield
     
-    logging.error(f"x_arrow: {x_arrow}, x_arrow_in_playfield: {x_arrow_in_playfield}")
-    logging.error(f"y_arrow: {y_arrow},y_arrow_in_playfield: {y_arrow_in_playfield}")
-    
+
     screen.addch(x_start + x - int(x_arrow_in_playfield), y_start + int(y_arrow_in_playfield), step[3])
+    
+
+
+
+def add_angle_to_playfield(screen: curses.window, size: Size, angle):
+    angle_x_middle = size.get_x_for_angle() + 1
+    angle_y_middle = size.get_y_for_angle() + 10
+
+    # Calculate the end coordinates based on the angle
+    angle_in_radians = math.radians(angle)
+    radius_x = 7  # Half the width of the circle (16 characters / 2 = 8 characters)
+    radius_y = 4  # Half the height of the circle (8 characters / 2 = 4 characters)
+    end_x = int(angle_y_middle + math.cos(angle_in_radians) * radius_x)
+    end_y = int(angle_x_middle + math.sin(angle_in_radians) * radius_y)
+
+    # Draw the line
+    screen.addch(angle_x_middle, angle_y_middle, 'o')  # Mark the middle point with 'O'
+    screen.addch(end_y, end_x, 'X')  # Draw the line to the end point with 'X'
+    draw_line(screen, angle_y_middle, angle_x_middle, end_y, end_x)  # Draw a line between the two points
+
+
+
+# Bresenham's line algorithm.
+def draw_line(screen: curses.window, x1, y1, x2, y2):
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+    sx = 1 if x1 < x2 else -1
+    sy = 1 if y1 < y2 else -1
+    err = dx - dy
+
+    while True:
+        screen.addch(y1, x1, 'X')
+
+        if x1 == x2 and y1 == y2:
+            break
+
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x1 += sx
+        if e2 < dx:
+            err += dx
+            y1 += sy
+
