@@ -18,6 +18,7 @@ def exit_handler():
     Exit handler for curses
     flushinp() - flush all input buffers
     """
+    
     curses.flushinp() 
     logging.info('Exit program')
 
@@ -39,7 +40,6 @@ def main(screen):
     add_logging()
     
     game_level_1: Game_Level_1 = Game_Level_1(screen)
-    logging.debug(type(screen))
     game_level_1.run()
 
     

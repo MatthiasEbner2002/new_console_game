@@ -84,3 +84,27 @@ def draw_playfield_borders(screen: curses.window, size:Size):
     screen.addch(x_start, y_start + y, curses.ACS_URCORNER | curses.A_BOLD)  # Upper right corner
     screen.addch(x_start + x, y_start, curses.ACS_LLCORNER | curses.A_BOLD)  # Lower left corner
     screen.addch(x_start + x, y_start + y, curses.ACS_LRCORNER | curses.A_BOLD)  # Lower right corner
+    
+    return  x_start, y_start, x, y  # Return the playfield borders for further use
+
+def add_arrow_start(screen : curses.window, playfield, start_position: int):
+    x_start, y_start, x, y = playfield
+    
+    screen.addch(x_start + x - start_position // 2, y_start + start_position, curses.ACS_LARROW | curses.A_BOLD)
+    
+    
+    
+    
+def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playfield, step):
+    x_arrow = step[0]
+    y_arrow = step[1]
+    
+    x_arrow_in_playfield = (x_arrow / playfield_size_original[0]) * playfield[2]
+    y_arrow_in_playfield = (y_arrow / playfield_size_original[1]) * playfield[3]
+    
+    x_start, y_start, x, y = playfield
+    
+    logging.error(f"x_arrow: {x_arrow}, x_arrow_in_playfield: {x_arrow_in_playfield}")
+    logging.error(f"y_arrow: {y_arrow},y_arrow_in_playfield: {y_arrow_in_playfield}")
+    
+    screen.addch(x_start + x - int(x_arrow_in_playfield), y_start + int(y_arrow_in_playfield), step[3])
