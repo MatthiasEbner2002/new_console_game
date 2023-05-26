@@ -1,9 +1,10 @@
 import logging
 import curses
 import time
+import atexit
 
 # My file import
-from classes.Size import Size
+from classes.Game_Level_1 import Game_Level_1
 
 def add_logging():
     logging.basicConfig(filename='log.log',
@@ -11,6 +12,15 @@ def add_logging():
                         format='%(asctime)s | %(name)s | %(levelname)s %(message)s',
                         datefmt='%H:%M:%S',
                         level=logging.DEBUG)
+    
+def exit_handler():
+    """
+    Exit handler for curses
+    flushinp() - flush all input buffers
+    """
+    curses.flushinp() 
+    logging.info('Exit program')
+
 
 def main(screen):
     curses.noecho()
@@ -23,15 +33,16 @@ def main(screen):
         curses.init_pair(i + 1, i, -1)
         
     curses.curs_set(0)
-       
+    
+    atexit.register(exit_handler)
+    
     add_logging()
     
-    size: Size = Size.from_terminal_size(screen=screen)
+    game_level_1: Game_Level_1 = Game_Level_1(screen)
+    
+    game_level_1.run()
 
-    while True:
-        size.update_terminal_size_with_logging_and_screen_refresh()
-        time.sleep(1)
+    
 
 if __name__ == '__main__':
     curses.wrapper(main)
-
