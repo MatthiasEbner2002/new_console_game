@@ -2,6 +2,11 @@ import logging, math, curses
 
 from classes.Size import Size
 
+"""
+Methods to draw borders and other things on the screen.
+interacts with the console and adds char and strings to the screen.
+"""
+
 def draw_borders(screen: curses.window, size: Size):
     """
     Draws the borders of the screen. If screen is None, logs warning.
@@ -87,14 +92,18 @@ def draw_playfield_borders(screen: curses.window, size:Size):
     
     return  x_start, y_start, x, y  # Return the playfield borders for further use
 
-
-def add_arrow_start(screen : curses.window, playfield, start_position: int):
-    x_start, y_start, x, y = playfield
-    
-    screen.addch(x_start + x - start_position // 2, y_start + start_position, curses.ACS_LARROW | curses.A_BOLD)
-   
     
 def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playfield, step):
+    """
+    Adds the arrow to the playfield. The arrow is the current step of the user. The arrow is a char and has a color. 
+
+    Args:
+        screen (curses.window): The screen to draw on
+        playfield_size_original (_type_): The playfield in its orginal size, the size where its getting calculated from 
+        playfield (_type_): the playfield, where the arrow is getting drawn on, the playfield_size_original is getting drawn in this field on the screen 
+        step (_type_): The current step of the user, the arrow is getting drawn on this position
+    """
+    
     arrow_color_pair = curses.color_pair(161)
     x_arrow = step[0]
     y_arrow = step[1]
@@ -104,7 +113,16 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
     screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, step[3], arrow_color_pair)
     
 
-def add_angle_to_playfield(screen: curses.window, size: Size, angle):
+def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
+    """
+    Adds the angle to the playfield. The angle is a line, representing the angle of the arrow. Under the angle is the angle value.
+
+    Args:
+        screen (curses.window): The screen to draw on
+        size (Size): the size of the screen and its positions of playfield and menu
+        angle (int): the angle of the arrow, the angle is getting drawn on this position
+    """
+    
     angle_x_middle = size.get_x_for_angle()
     angle_y_middle = size.get_y_for_angle()
 
@@ -131,12 +149,22 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle):
 
 
 def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximum: int):
-        x = size.get_x_for_progress_bar()
-        y = size.get_y_for_progress_bar()
-        progress = value * 100 // maximum
-        filled_length = value * 20 // maximum
-        empty_length = 20 - filled_length
-        screen.addstr(x, y, str(value) + (" ","")[value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
+    """
+    Adds the power to the playfield. The power is a progress bar, representing the power of the arrow. At the left of the power is the power value.
+
+    Args:
+        screen (curses.window): The screen to draw on
+        size (Size): the size of the screen and its positions of playfield and menu
+        value (int): The current power of the arrow, the power is getting drawn on this position
+        maximum (int): The maximum power of the arrow.
+    """
+
+    x = size.get_x_for_progress_bar()
+    y = size.get_y_for_progress_bar()
+    progress = value * 100 // maximum
+    filled_length = value * 20 // maximum
+    empty_length = 20 - filled_length
+    screen.addstr(x, y, str(value) + (" ","")[value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
 
 
 def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: int):
@@ -173,21 +201,51 @@ def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: 
             y1 += sy
 
 
-def get_arrow_line(angle):
-        normalized_angle = angle % 360
-        index = round(normalized_angle / 45) % 8
-        arrows = ['─', '/', '|', '\\', '─', '/', '|', '\\']
-        return arrows[index]
+def get_arrow_line(angle: int):
+    """
+    returns the line of the arrow, based on the angle
+
+    Args:
+        angle (int): the angle, that needs to be drawn
+
+    Returns:
+        string: the line of the arrow to use, based on the angle
+    """
+    
+    normalized_angle = angle % 360
+    index = round(normalized_angle / 45) % 8
+    arrows = ['─', '/', '|', '\\', '─', '/', '|', '\\']
+    return arrows[index]
     
     
-def get_arrow_direction(angle):
-        normalized_angle = angle % 360
-        index = round(normalized_angle / 45) % 8
-        arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
-        return arrows[index]
+def get_arrow_direction(angle: int):
+    """
+    returns the direction of the arrow, based on the angle
+
+    Args:
+        angle (int): the angle, that needs to be drawn
+
+    Returns:
+        string : Arrow pointing in the direction of the angle
+    """
     
+    normalized_angle = angle % 360
+    index = round(normalized_angle / 45) % 8
+    arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
+    return arrows[index]
+
     
 def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original, playfield,  start_position):
+    """
+    Adds the start of the arrow to the playfield. The start is a bullet, representing the start of the arrow.
+
+    Args:
+        screen (curses.window): The screen to draw on
+        playfield_size_original (_type_): The size of the original playfield, before it got drawn on the screen
+        playfield (_type_): The playfield, the space  on the screen, where the playfield is getting drawn
+        start_position (_type_): The position of the start of the arrow
+    """
+    
     arrow_color_pair = curses.color_pair(161)
     start_char = curses.ACS_BULLET | curses.A_BOLD
 
@@ -196,6 +254,17 @@ def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original,
     
     
 def get_screen_position_from_playfield_position(playfield_size_original, playfield, position):
+    """
+    Converts a position in the playfield to a position on the screen
+
+    Args:
+        playfield_size_original (_type_): The size of the original playfield, before it got drawn on the screen
+        playfield (_type_): the playfield, the space  on the screen, where the playfield is getting drawn
+        position (_type_): the position to be converted
+
+    Returns:
+        _type_: the position on the screen
+    """
     x = position[0]
     y = position[1]
     

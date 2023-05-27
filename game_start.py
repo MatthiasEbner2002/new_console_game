@@ -1,6 +1,5 @@
 import logging
 import curses
-import time
 import atexit
 
 # My file import

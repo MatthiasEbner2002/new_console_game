@@ -2,7 +2,7 @@ from pynput import keyboard
 from pynput.keyboard import Key
 import logging
 
-from classes.test_arrow import ArrowTrajectory
+from classes.ArrowTrajectory import ArrowTrajectory
 
 
 class Input:
