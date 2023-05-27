@@ -110,16 +110,16 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle):
     angle_y_middle = size.get_y_for_angle()
 
     # Calculate the end coordinates based on the angle
-    angle = 360 - angle  # Rotate the angle 180 degrees
+    angle = 360 - angle  # Rotate the angle 180 degrees      
     angle_in_radians = math.radians(angle)
-    radius_x = 7  # Half the width of the circle (16 characters / 2 = 8 characters)
-    radius_y = 4  # Half the height of the circle (8 characters / 2 = 4 characters)
+    radius_x = 7 # y radius  
+    radius_y = 4 # x radius
     end_x = int(angle_y_middle + math.cos(angle_in_radians) * radius_x)
     end_y = int(angle_x_middle + math.sin(angle_in_radians) * radius_y)
 
     # Draw the line
-    screen.addch(angle_x_middle, angle_y_middle, 'o')  # Mark the middle point with 'O'
     draw_line(screen, angle_y_middle, angle_x_middle, end_x, end_y, abs(angle - 360))  # Draw a line between the two points
+    screen.addch(angle_x_middle, angle_y_middle, 'o')  # Mark the middle point with 'O'
     screen.addch(end_y, end_x, get_arrow_direction(abs(angle - 360)))  # Draw the line to the end point with 'X'
 
     # Calculate the angle value

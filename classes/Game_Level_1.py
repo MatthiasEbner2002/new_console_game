@@ -19,7 +19,7 @@ class Game_Level_1:
         self.start_location = (1, 1)                            # Starting location of the arrow
         self.input: Input = Input(self)                         # Input object, handles keyboard input
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
-         
+        self.run_game: bool = True                              # Boolean, used to stop the game loop
     def run(self):
 
         
@@ -28,7 +28,7 @@ class Game_Level_1:
         step = None
         
         
-        while True:
+        while self.run_game:
             self.screen.clear()
             self.size.update_terminal_size_with_screen_refresh()
             draw_borders(self.screen, self.size)
@@ -96,3 +96,7 @@ class Game_Level_1:
         self.trajectory = None
         logging.info("Game_Level_1.py | remove_arrow_and_set_input_to_get_new_angle(): Arrow removed and input set to get new angle.")
     
+    
+    def stop_game_and_exit(self):
+        self.run_game = False
+        logging.info("Game_Level_1.py | stop_game_and_exit(): Game stopped and should exit.")

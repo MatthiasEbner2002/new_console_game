@@ -11,6 +11,7 @@ class Input:
         self.d = 0
         self.w = 0
         self.s = 0
+        self.q = 0
         self.space = 0
         self.level = level
         
@@ -36,6 +37,9 @@ class Input:
                 self.w = 1
             case keyboard.KeyCode(char='s'):
                 self.s = 1
+            case keyboard.KeyCode(char='q'):
+                self.q = 1
+                self.level.stop_game_and_exit()
             case Key.space:
                 if self.space == 0:
                     logging.info("Input.py | keyDown(): Space pressed | getting angle finished") 
