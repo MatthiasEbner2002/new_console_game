@@ -10,13 +10,20 @@ class ArrowTrajectory:
         self.arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
     
     def calculate_step(self):
+        """
+        Calculates the next step of the arrow's trajectory.
+        There is a time interval of 0.02 seconds between each step.
+
+        Returns:
+            Tuple[float, float, float, str]: (x, y, direction, arrow)
+        """
         time_interval = 0.02
         current_time = self.current_time
-        x = self.start_location[0] + self.start_power * math.cos(math.radians(self.angle)) * current_time
-        y = self.start_location[1] + (self.start_power * math.sin(math.radians(self.angle)) * current_time) - (0.5 * self.gravity * current_time ** 2)
+        x: float = self.start_location[0] + self.start_power * math.cos(math.radians(self.angle)) * current_time
+        y: float = self.start_location[1] + (self.start_power * math.sin(math.radians(self.angle)) * current_time) - (0.5 * self.gravity * current_time ** 2)
         direction = math.degrees(math.atan2(self.start_power * math.sin(math.radians(self.angle)) - (self.gravity * current_time), self.start_power * math.cos(math.radians(self.angle))))
         self.current_time += time_interval
-        arrow = self.get_arrow_direction(direction)
+        arrow: str = self.get_arrow_direction(direction)
 
         
         return (y, x, direction, arrow)

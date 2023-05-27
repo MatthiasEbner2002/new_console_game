@@ -87,13 +87,12 @@ def draw_playfield_borders(screen: curses.window, size:Size):
     
     return  x_start, y_start, x, y  # Return the playfield borders for further use
 
+
 def add_arrow_start(screen : curses.window, playfield, start_position: int):
     x_start, y_start, x, y = playfield
     
     screen.addch(x_start + x - start_position // 2, y_start + start_position, curses.ACS_LARROW | curses.A_BOLD)
-    
-    
-    
+   
     
 def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playfield, step):
     x_arrow = step[0]
@@ -107,8 +106,6 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
 
     screen.addch(x_start + x - int(x_arrow_in_playfield), y_start + int(y_arrow_in_playfield), step[3])
     
-
-
 
 def add_angle_to_playfield(screen: curses.window, size: Size, angle):
     angle_x_middle = size.get_x_for_angle()
@@ -134,20 +131,28 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle):
     screen.addstr(angle_x_middle + 4, 11, angle_text)  # Adjusted the position for clarity
 
 
-
-
 def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximum: int):
         x = size.get_x_for_progress_bar()
         y = size.get_y_for_progress_bar()
         progress = value * 100 // maximum
         filled_length = value * 20 // maximum
         empty_length = 20 - filled_length
-        screen.addstr(x, y, str(value) + "p [" + "=" * filled_length + " " * empty_length + "]")
+        screen.addstr(x, y, str(value) + (" ","")[value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
 
-  
 
-# Bresenham's line algorithm.
-def draw_line(screen: curses.window, x1, y1, x2, y2, angle):
+def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: int):
+    """
+    Bresenham's line algorithm.
+
+
+    Args:
+        screen (curses.window): The screen to draw on.
+        x1 (int): The x coordinate of the starting point.
+        y1 (int): The y coordinate of the starting point.
+        x2 (int): The x coordinate of the end point.
+        y2 (int): The y coordinate of the end point.
+        angle (int): The angle of the line.
+    """
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
     sx = 1 if x1 < x2 else -1
@@ -175,8 +180,24 @@ def get_arrow_line(angle):
         arrows = ['─', '/', '|', '\\', '─', '/', '|', '\\']
         return arrows[index]
     
+    
 def get_arrow_direction(angle):
         normalized_angle = angle % 360
         index = round(normalized_angle / 45) % 8
         arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
         return arrows[index]
+    
+    
+def add_arrow_start_to_playfield(screen: curses.window, playfield_size,playfield,  start_position):
+    pass
+    
+def get_screen_position_from_playfield_position(playfield_size_original, playfield, position):
+    x = position[0]
+    y = position[1]
+    
+    x_in_playfield = (x / playfield_size_original[0]) * playfield[2]
+    y_in_playfield = (y / playfield_size_original[1]) * playfield[3]
+    
+    x_start, y_start, x, y = playfield
+    
+    return (x_start + x - int(x_in_playfield), y_start + int(y_in_playfield))
