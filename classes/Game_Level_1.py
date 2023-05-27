@@ -33,6 +33,7 @@ class Game_Level_1:
             self.size.update_terminal_size_with_screen_refresh()
             draw_borders(self.screen, self.size)
             playfield_size = draw_playfield_borders(self.screen, self.size)
+            add_arrow_start_to_playfield(self.screen, playfield_size_original, playfield_size, self.start_location)
             
                     
             match self.input.space:
@@ -44,7 +45,7 @@ class Game_Level_1:
                     self.angle += 3
                     self.angle %= 360
                     add_angle_to_playfield(self.screen, self.size, self.angle)
-                    add_arrow_start_to_playfield(self.screen, playfield_size_original,playfield_size, self.start_location)
+                    #add_arrow_start_to_playfield(self.screen, playfield_size_original,playfield_size, self.start_location)
                     self.screen.refresh()
                     time.sleep(3 / 120)
                     

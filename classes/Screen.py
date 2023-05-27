@@ -71,19 +71,20 @@ def draw_playfield_borders(screen: curses.window, size:Size):
         return
     
     x_start, y_start, x, y = size.calculate_playfield()
+    border_color_pair = curses.color_pair(3)
     
     for i in range(x_start, x_start + x):
-        screen.addch(i, y_start, curses.ACS_VLINE | curses.A_BOLD)  # Left border line
-        screen.addch(i, y_start + y, curses.ACS_VLINE | curses.A_BOLD)  # Right border line
+        screen.addch(i, y_start, curses.ACS_VLINE | curses.A_BOLD, border_color_pair)  # Left border line
+        screen.addch(i, y_start + y, curses.ACS_VLINE | curses.A_BOLD, border_color_pair)  # Right border line
         
     for i in range(y_start, y_start +  y):
-        screen.addch(x_start, i, curses.ACS_HLINE | curses.A_BOLD)  # Top border line
-        screen.addch(x_start + x, i, curses.ACS_HLINE | curses.A_BOLD)  # Bottom border line
+        screen.addch(x_start, i, curses.ACS_HLINE | curses.A_BOLD, border_color_pair)  # Top border line
+        screen.addch(x_start + x, i, curses.ACS_HLINE | curses.A_BOLD, border_color_pair)  # Bottom border line
         
-    screen.addch(x_start, y_start, curses.ACS_ULCORNER | curses.A_BOLD)  # Upper left corner
-    screen.addch(x_start, y_start + y, curses.ACS_URCORNER | curses.A_BOLD)  # Upper right corner
-    screen.addch(x_start + x, y_start, curses.ACS_LLCORNER | curses.A_BOLD)  # Lower left corner
-    screen.addch(x_start + x, y_start + y, curses.ACS_LRCORNER | curses.A_BOLD)  # Lower right corner
+    screen.addch(x_start, y_start, curses.ACS_ULCORNER | curses.A_BOLD, border_color_pair)  # Upper left corner
+    screen.addch(x_start, y_start + y, curses.ACS_URCORNER | curses.A_BOLD, border_color_pair)  # Upper right corner
+    screen.addch(x_start + x, y_start, curses.ACS_LLCORNER | curses.A_BOLD, border_color_pair)  # Lower left corner
+    screen.addch(x_start + x, y_start + y, curses.ACS_LRCORNER | curses.A_BOLD, border_color_pair)  # Lower right corner
     
     return  x_start, y_start, x, y  # Return the playfield borders for further use
 
@@ -95,16 +96,13 @@ def add_arrow_start(screen : curses.window, playfield, start_position: int):
    
     
 def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playfield, step):
+    arrow_color_pair = curses.color_pair(161)
     x_arrow = step[0]
     y_arrow = step[1]
+    arrow_position = (x_arrow, y_arrow)
+    x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(playfield_size_original, playfield, arrow_position) # Get the screen position of the arrow
     
-    x_arrow_in_playfield = (x_arrow / playfield_size_original[0]) * playfield[2]
-    y_arrow_in_playfield = (y_arrow / playfield_size_original[1]) * playfield[3]
-    
-    x_start, y_start, x, y = playfield
-    
-
-    screen.addch(x_start + x - int(x_arrow_in_playfield), y_start + int(y_arrow_in_playfield), step[3])
+    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, step[3], arrow_color_pair)
     
 
 def add_angle_to_playfield(screen: curses.window, size: Size, angle):
@@ -188,8 +186,13 @@ def get_arrow_direction(angle):
         return arrows[index]
     
     
-def add_arrow_start_to_playfield(screen: curses.window, playfield_size,playfield,  start_position):
-    pass
+def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original, playfield,  start_position):
+    arrow_color_pair = curses.color_pair(161)
+    start_char = curses.ACS_BULLET | curses.A_BOLD
+
+    x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(playfield_size_original, playfield, (start_position[1], start_position[0])) # Get the screen position of the arrow
+    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, start_char, arrow_color_pair)
+    
     
 def get_screen_position_from_playfield_position(playfield_size_original, playfield, position):
     x = position[0]
