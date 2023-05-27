@@ -21,7 +21,7 @@ def log_start():
     
               Welcome to Your Game!
     
-        Get ready for an exciting adventure!
+     Get ready for an exciting adventure!
     
     =====================================
     ''')

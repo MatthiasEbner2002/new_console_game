@@ -1,4 +1,4 @@
-import time, logging, keyboard, curses
+import time, logging, curses
 
 
 from classes.Screen import *
@@ -23,17 +23,16 @@ class Game_Level_1:
     def run(self):
 
         
-        playfield_size_original  = (22.7, 100) # (height, width)
-        trajectory = None
+        playfield_size_original = (22.7, 100) # (height, width)
         step = None
         
         
         while self.run_game:
-            self.screen.clear()
-            self.size.update_terminal_size_with_screen_refresh()
-            draw_borders(self.screen, self.size)
-            playfield_size = draw_playfield_borders(self.screen, self.size)
-            add_arrow_start_to_playfield(self.screen, playfield_size_original, playfield_size, self.start_location)
+            self.screen.clear() # Clear the screen
+            self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
+            draw_borders(self.screen, self.size) # Draw the borders of the screen
+            playfield_size = draw_playfield_borders(self.screen, self.size) # Draw the borders of the playfield
+            add_arrow_start_to_playfield(self.screen, playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
             
                     
             match self.input.space:
@@ -44,8 +43,7 @@ class Game_Level_1:
                     """
                     self.angle += 3
                     self.angle %= 360
-                    add_angle_to_playfield(self.screen, self.size, self.angle)
-                    #add_arrow_start_to_playfield(self.screen, playfield_size_original,playfield_size, self.start_location)
+                    add_angle_to_playfield(self.screen, self.size, self.angle) # Draw the angle of the arrow
                     self.screen.refresh()
                     time.sleep(3 / 120)
                     
@@ -54,13 +52,16 @@ class Game_Level_1:
                     """
                     This code snippet is used to change the power of the arrow.
                     """
-                    self.power = (self.power + 1) % self.max_power
+                    self.power = (self.power + 1) % (self.max_power + 1)
                     add_angle_to_playfield(self.screen, self.size, self.angle)
                     add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
                     self.screen.refresh()
                     time.sleep(4 / 120)
                     
                 case 2: 
+                    """
+                    This code snippet is used to calculate the trajectory of the arrow.
+                    """
                     
                     add_angle_to_playfield(self.screen, self.size, self.angle)
                     add_power_to_playfield(self.screen, self.size, self.power, 25)
@@ -69,7 +70,7 @@ class Game_Level_1:
                         logging.error("Game_Level_1.py | run(): Trajectory is None")                        
                     else:
                         old_step = step
-                        step = self.trajectory.calculate_step()
+                        step = self.trajectory.calculate_step() # Calculate the next step of the arrow
                         if step[0] > playfield_size_original[0] or step[0] < 0 or step[1] > playfield_size_original[1] or step[1] < 0:
                             logging.info("Game_Level_1.py | run(): Arrow is out of bounds")
                             if old_step is not None:
@@ -77,7 +78,7 @@ class Game_Level_1:
                                 self.remove_arrow_and_set_input_to_get_new_angle()
                             else:
                                 logging.error("Game_Level_1.py | run(): old_step is None, start location was out of bounds.")
-                                break
+                                self.stop_game_and_exit()
                         
                         add_arrow_to_playfield(self.screen, playfield_size_original, playfield_size, step)
                         self.screen.refresh()

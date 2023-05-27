@@ -1,5 +1,4 @@
-import logging, math
-import curses
+import logging, math, curses
 
 from classes.Size import Size
 
@@ -114,6 +113,8 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle):
     angle_in_radians = math.radians(angle)
     radius_x = 7 # y radius  
     radius_y = 4 # x radius
+    
+    # copyed from internet
     end_x = int(angle_y_middle + math.cos(angle_in_radians) * radius_x)
     end_y = int(angle_x_middle + math.sin(angle_in_radians) * radius_y)
 
@@ -140,7 +141,7 @@ def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximu
 
 def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: int):
     """
-    Bresenham's line algorithm.
+    Bresenham's line algorithm. copyed from internet
 
 
     Args:
