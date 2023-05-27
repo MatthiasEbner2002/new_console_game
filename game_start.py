@@ -13,6 +13,20 @@ def add_logging():
                         datefmt='%H:%M:%S',
                         level=logging.DEBUG)
     
+def log_start():
+    logging.info('''
+    =====================================
+              G A M E   S T A R T
+    =====================================
+    
+              Welcome to Your Game!
+    
+        Get ready for an exciting adventure!
+    
+    =====================================
+    ''')
+
+    
 def exit_handler():
     """
     Exit handler for curses
@@ -38,6 +52,9 @@ def main(screen):
     atexit.register(exit_handler)
     
     add_logging()
+    
+    log_start()
+    
     
     game_level_1: Game_Level_1 = Game_Level_1(screen)
     game_level_1.run()

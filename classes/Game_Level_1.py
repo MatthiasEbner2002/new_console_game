@@ -82,6 +82,7 @@ class Game_Level_1:
                         add_arrow_to_playfield(self.screen, playfield_size_original, playfield_size, step)
                         self.screen.refresh()
                         time.sleep(0.01)
+        logging.info("Game_Level_1.py | run(): Game loop exited.")
                     
             
             
