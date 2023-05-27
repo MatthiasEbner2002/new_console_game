@@ -3,7 +3,7 @@ import time, logging, curses
 
 from classes.Screen import *
 from classes.Size import Size
-from classes.test_arrow import ArrowTrajectory
+from classes.ArrowTrajectory import ArrowTrajectory
 from classes.Input import Input
 
 
@@ -20,10 +20,11 @@ class Game_Level_1:
         self.input: Input = Input(self)                         # Input object, handles keyboard input
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
         self.run_game: bool = True                              # Boolean, used to stop the game loop
+        self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
+    
     def run(self):
 
         
-        playfield_size_original = (22.7, 100) # (height, width)
         step = None
         
         
@@ -32,7 +33,7 @@ class Game_Level_1:
             self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
             draw_borders(self.screen, self.size) # Draw the borders of the screen
             playfield_size = draw_playfield_borders(self.screen, self.size) # Draw the borders of the playfield
-            add_arrow_start_to_playfield(self.screen, playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
+            add_arrow_start_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
             
                     
             match self.input.space:
@@ -71,7 +72,7 @@ class Game_Level_1:
                     else:
                         old_step = step
                         step = self.trajectory.calculate_step() # Calculate the next step of the arrow
-                        if step[0] > playfield_size_original[0] or step[0] < 0 or step[1] > playfield_size_original[1] or step[1] < 0:
+                        if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
                             logging.info("Game_Level_1.py | run(): Arrow is out of bounds")
                             if old_step is not None:
                                 self.start_location = (old_step[1], old_step[0])
@@ -80,7 +81,7 @@ class Game_Level_1:
                                 logging.error("Game_Level_1.py | run(): old_step is None, start location was out of bounds.")
                                 self.stop_game_and_exit()
                         
-                        add_arrow_to_playfield(self.screen, playfield_size_original, playfield_size, step)
+                        add_arrow_to_playfield(self.screen, self.playfield_size_original, playfield_size, step)
                         self.screen.refresh()
                         time.sleep(0.01)
         logging.info("Game_Level_1.py | run(): Game loop exited.")
