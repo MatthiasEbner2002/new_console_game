@@ -20,7 +20,7 @@ def draw_borders(screen: curses.window, size: Size):
     y = size.get_y_for_border()
     x = size.get_x_for_border()
     if screen is None:
-        logging.warning("Size.py | draw_border(): Screen is not set")
+        logging.warning("Screen is not set")
         return
 
     # Draw horizontal lines
@@ -53,7 +53,7 @@ def add_user_platform(screen: curses.window, size: Size):
     """
     
     if screen is None:
-        logging.warning("Size.py | add_user_platform(): Screen is not set")
+        logging.warning("Screen is not set")
         return
 
     x = size.get_x()
@@ -71,7 +71,7 @@ def draw_playfield_borders(screen: curses.window, size:Size):
     """
     
     if screen is None:
-        logging.warning("Size.py | draw_playfield_borders(): Screen is not set")
+        logging.warning("Screen is not set")
         return
     
     x_start, y_start, x, y = size.calculate_playfield()

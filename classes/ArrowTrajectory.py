@@ -8,6 +8,9 @@ class ArrowTrajectory:
         self.gravity = gravity
         self.current_time = 0
         self.arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
+        
+        self.actual_step = None
+        self.old_step = None
     
     def calculate_step(self):
         """
@@ -17,6 +20,7 @@ class ArrowTrajectory:
         Returns:
             Tuple[float, float, float, str]: (x, y, direction, arrow)
         """
+        self.old_step = self.actual_step
         time_interval = 0.02
         current_time = self.current_time
         x: float = self.start_location[0] + self.start_power * math.cos(math.radians(self.angle)) * current_time
@@ -25,8 +29,9 @@ class ArrowTrajectory:
         self.current_time += time_interval
         arrow: str = self.get_arrow_direction(direction)
 
-        
-        return (y, x, direction, arrow)
+        ret =  (y, x, direction, arrow)
+        self.actual_step = ret
+        return ret
     
     def get_arrow_direction(self, angle):
         normalized_angle = angle % 360

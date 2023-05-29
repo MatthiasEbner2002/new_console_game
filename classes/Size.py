@@ -65,7 +65,7 @@ class Size:
         If screen is not set and still None, logs warning.
         """
         if self.screen == None:
-            logging.warn("Size.py | update_terminal_size(): cannot update, because screen is not set")
+            logging.warn("Cannot update, because screen is not set")
             return
         
         rows, columns = self.screen.getmaxyx()
@@ -82,7 +82,7 @@ class Size:
         """
         
         if self.screen is None:
-            logging.warning("size.py | refresh_screen(): screen is None")
+            logging.warning("Screen is None")
             return
         
         self.screen.refresh()

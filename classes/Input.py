@@ -2,9 +2,6 @@ from pynput import keyboard
 from pynput.keyboard import Key
 import logging
 
-from classes.ArrowTrajectory import ArrowTrajectory
-
-
 class Input:
     def __init__(self, level):
         self.a = 0
@@ -41,19 +38,7 @@ class Input:
                 self.q = 1
                 self.level.stop_game_and_exit()
             case Key.space:
-                if self.space == 0:
-                    logging.info("Input.py | keyDown(): Space pressed | getting angle finished") 
-                    self.space += 1
-
-                elif self.space == 1:
-                    logging.info("Input.py | keyDown(): Space pressed | getting power finished")
-                    self.level.trajectory = ArrowTrajectory(self.level.start_location, self.level.power, self.level.angle, self.level.gravity)                    
-                    self.space += 1
-                    
-                elif self.space == 2:
-                    logging.info("Input.py | keyDown(): Space pressed | trajectory finished")
-                    self.level.trajectory = None
-                    self.space = 0
+                self.level.next_step_for_game()
                 
 
     def keyUp(self, key):
@@ -76,5 +61,5 @@ class Input:
             case Key.space:
                 pass
             case default:
-                logging.info(f"Input.py | keyUp(): Key not recognized: {key}")
+                logging.info(f"Key not recognized: {key}")
         

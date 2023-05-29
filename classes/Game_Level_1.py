@@ -21,7 +21,8 @@ class Game_Level_1:
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
         self.run_game: bool = True                              # Boolean, used to stop the game loop
         self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
-    
+        self.game_step_for_game_loop = 0                        # Integer, used to keep track of the current game step in the game loop
+
     def run(self):
 
         
@@ -36,7 +37,7 @@ class Game_Level_1:
             add_arrow_start_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
             
                     
-            match self.input.space:
+            match self.game_step_for_game_loop:
                                 
                 case 0:
                     """
@@ -68,23 +69,23 @@ class Game_Level_1:
                     add_power_to_playfield(self.screen, self.size, self.power, 25)
                         
                     if self.trajectory is None:
-                        logging.error("Game_Level_1.py | run(): Trajectory is None")                        
+                        logging.error("Trajectory is None")                        
                     else:
                         old_step = step
                         step = self.trajectory.calculate_step() # Calculate the next step of the arrow
                         if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
-                            logging.info("Game_Level_1.py | run(): Arrow is out of bounds")
+                            logging.info("Arrow is out of bounds")
                             if old_step is not None:
                                 self.start_location = (old_step[1], old_step[0])
                                 self.remove_arrow_and_set_input_to_get_new_angle()
                             else:
-                                logging.error("Game_Level_1.py | run(): old_step is None, start location was out of bounds.")
+                                logging.error("Old_step is None, start location was out of bounds.")
                                 self.stop_game_and_exit()
                         
                         add_arrow_to_playfield(self.screen, self.playfield_size_original, playfield_size, step)
                         self.screen.refresh()
                         time.sleep(0.01)
-        logging.info("Game_Level_1.py | run(): Game loop exited.")
+        logging.info("Game loop exited.")
                     
             
             
@@ -95,11 +96,37 @@ class Game_Level_1:
         pass
     
     def remove_arrow_and_set_input_to_get_new_angle(self):
-        self.input.space = 0
+        self.game_step_for_game_loop = 0
         self.trajectory = None
-        logging.info("Game_Level_1.py | remove_arrow_and_set_input_to_get_new_angle(): Arrow removed and input set to get new angle.")
+        logging.info("Arrow removed and input set to get new angle.")
     
     
     def stop_game_and_exit(self):
         self.run_game = False
-        logging.info("Game_Level_1.py | stop_game_and_exit(): Game stopped and should exit.")
+        logging.info("Game stopped and should exit.")
+        
+        
+    def stop_arrow_and_remove_arrow_and_safe_last_position(self):
+        if self.trajectory is None  or self.trajectory.actual_step is None:
+            logging.error("trajectory does not exist or has not calculated any step")
+        
+        self.start_location = (self.trajectory.actual_step[1], self.trajectory.actual_step[0])
+        self.trajectory = None
+        
+        
+    def next_step_for_game(self):
+        match self.game_step_for_game_loop:
+            case 0:
+                logging.info("Next step | getting angle finished") 
+                self.game_step_for_game_loop = 1
+
+            case 1:
+                logging.info("Next step | getting power finished")
+                
+                self.trajectory = ArrowTrajectory(self.start_location, self.power, self.angle, self.gravity)                    
+                self.game_step_for_game_loop = 2
+                
+            case 2:
+                logging.info("Next step | trajectory finished")
+                self.stop_arrow_and_remove_arrow_and_safe_last_position()
+                self.game_step_for_game_loop = 0
