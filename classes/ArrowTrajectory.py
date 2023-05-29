@@ -2,14 +2,14 @@ import math
 
 class ArrowTrajectory:
     def __init__(self, start_location, start_power, angle, gravity):
-        self.start_location = start_location
-        self.start_power = start_power
-        self.angle = angle
-        self.gravity = gravity
-        self.current_time = 0
-        self.arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']
+        self.start_location = start_location                            # start_location: Tuple[float, float]
+        self.start_power = start_power                                  # start_power: int
+        self.angle = angle                                              # angle: int
+        self.gravity = gravity                                          # gravity: float
+        self.current_time = 0                                           # current_time: float
+        self.arrows = ['→','↗', '↑', '↖', '←', '↙', '↓', '↘']           # arrows: List[str] list of all arrows
         
-        self.actual_step = None
+        self.actual_step = self.start_location
         self.old_step = None
     
     def calculate_step(self):
@@ -20,8 +20,8 @@ class ArrowTrajectory:
         Returns:
             Tuple[float, float, float, str]: (x, y, direction, arrow)
         """
-        self.old_step = self.actual_step
-        time_interval = 0.02
+        self.old_step = self.actual_step        # safe the old step, so we can set the arrow position back to the old step if the arrow is out of bounds 
+        time_interval = 0.02                    # then time_interval for calculating the steps
         current_time = self.current_time
         x: float = self.start_location[0] + self.start_power * math.cos(math.radians(self.angle)) * current_time
         y: float = self.start_location[1] + (self.start_power * math.sin(math.radians(self.angle)) * current_time) - (0.5 * self.gravity * current_time ** 2)
@@ -30,15 +30,28 @@ class ArrowTrajectory:
         arrow: str = self.get_arrow_direction(direction)
 
         ret =  (y, x, direction, arrow)
-        self.actual_step = ret
+        self.actual_step = ret              # safe the step 
         return ret
     
     def get_arrow_direction(self, angle):
+        """
+        Returns the arrow that corresponds to the given angle.
+        Args:
+            angle (int): Angle in degrees
+        Returns:
+            str: Arrow that corresponds to the given angle
+        """
+        
         normalized_angle = angle % 360
         index = round(normalized_angle / 45) % 8
         return self.arrows[index]
-"""_summary_
+    
+    
+    
+"""
+
 # Example usage
+
 start_location = (0, 0)  # Starting location of the arrow
 start_power = 30  # Initial power of the arrow
 angle = 45  # Launch angle in degrees

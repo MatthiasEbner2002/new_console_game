@@ -31,8 +31,8 @@ class Game_Level_1:
         
         while self.run_game:
             self.screen.clear() # Clear the screen
-            self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
-            draw_borders(self.screen, self.size) # Draw the borders of the screen
+            self.size.update_terminal_size_with_screen_refresh()            # Update the size object with the new terminal size
+            draw_borders(self.screen, self.size)                            # Draw the borders of the screen
             playfield_size = draw_playfield_borders(self.screen, self.size) # Draw the borders of the playfield
             add_arrow_start_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
             
@@ -71,15 +71,14 @@ class Game_Level_1:
                     if self.trajectory is None:
                         logging.error("Trajectory is None")                        
                     else:
-                        old_step = step
                         step = self.trajectory.calculate_step() # Calculate the next step of the arrow
                         if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
                             logging.info("Arrow is out of bounds")
-                            if old_step is not None:
-                                self.start_location = (old_step[1], old_step[0])
+                            if self.trajectory.old_step is not None:
+                                self.start_location = (self.trajectory.old_step[1], self.trajectory.old_step[0])
                                 self.remove_arrow_and_set_input_to_get_new_angle()
                             else:
-                                logging.error("Old_step is None, start location was out of bounds.")
+                                logging.error("Old_step is None")
                                 self.stop_game_and_exit()
                         
                         add_arrow_to_playfield(self.screen, self.playfield_size_original, playfield_size, step)
@@ -102,11 +101,20 @@ class Game_Level_1:
     
     
     def stop_game_and_exit(self):
+        """
+        This function is used to stop the game loop and exit the game.
+        """
+        
         self.run_game = False
         logging.info("Game stopped and should exit.")
         
         
     def stop_arrow_and_remove_arrow_and_safe_last_position(self):
+        """
+        This function is used to stop the arrow and remove it from Level and safe the new starting location.
+
+        """
+        
         if self.trajectory is None  or self.trajectory.actual_step is None:
             logging.error("trajectory does not exist or has not calculated any step")
         
@@ -115,6 +123,11 @@ class Game_Level_1:
         
         
     def next_step_for_game(self):
+        """
+        This function is used to go to the next step in the game.
+        Swtiches between the different game steps.
+        """
+        
         match self.game_step_for_game_loop:
             case 0:
                 logging.info("Next step | getting angle finished") 
@@ -130,3 +143,6 @@ class Game_Level_1:
                 logging.info("Next step | trajectory finished")
                 self.stop_arrow_and_remove_arrow_and_safe_last_position()
                 self.game_step_for_game_loop = 0
+            
+            case default:
+                logging.error(f"Next step | default case: no case found for game_step_for_game_loop = {self.game_step_for_game_loop}")
