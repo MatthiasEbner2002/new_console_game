@@ -6,9 +6,11 @@ import atexit
 from classes.Game_Level_1 import Game_Level_1
 
 def add_logging():
+    format1 = '%(asctime)s %(levelname)s [%(filename)s - %(funcName)s(): %(lineno)s]: %(message)s'
+    format2 = '%(asctime)s | %(name)s | %(levelname)s %(message)s'
     logging.basicConfig(filename='log.log',
                         filemode='a',
-                        format='%(asctime)s | %(name)s | %(levelname)s %(message)s',
+                        format=format1,
                         datefmt='%H:%M:%S',
                         level=logging.DEBUG)
     
