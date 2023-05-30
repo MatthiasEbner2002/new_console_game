@@ -1,0 +1,39 @@
+
+##
+
+####
+####
+
+######
+######
+######
+
+
+########
+########
+########
+########
+
+
+
+change size dipending on the size of the screen, aka the count of lines and collumns
+
+
+⋐⋑
+
+╔═╗
+╚═╝
+
+╔═══╗
+║ # ║
+╚═══╝
+
+╔═════╗
+║ ╔═╗ ║
+║ ╚═╝ ║
+╚═════╝
+
+
+Since ╗ and ╚ have less width as ═, its hard to tell where to add the target on the screen.
+
+

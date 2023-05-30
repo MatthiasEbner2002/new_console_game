@@ -247,8 +247,8 @@ def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original,
     """
     
     arrow_color_pair = curses.color_pair(161)
-    start_char = curses.ACS_BULLET | curses.A_BOLD
-
+    #start_char = curses.ACS_BULLET | curses.A_BOLD
+    start_char = 'o'
     x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(playfield_size_original, playfield, (start_position[1], start_position[0])) # Get the screen position of the arrow
     screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, start_char, arrow_color_pair)
     
@@ -273,4 +273,31 @@ def get_screen_position_from_playfield_position(playfield_size_original, playfie
     
     x_start, y_start, x, y = playfield
     
-    return (x_start + x - int(x_in_playfield), y_start + int(y_in_playfield))
+    return (x_start + x - round(x_in_playfield), y_start + round(y_in_playfield))
+
+
+
+def add_test_target(screen: curses.window, playfield_size_original, playfield, target_center, target_diameter):
+    pass
+
+
+
+def add_targets_to_playfield(screen: curses.window, playfield_size_original, playfield_size, targets: list):
+    target_color_pair = curses.color_pair(161)
+
+    for target in targets:
+        position, diameter = target
+        x_target_in_playfield, y_target_in_playfield = get_screen_position_from_playfield_position(playfield_size_original, playfield_size, position) # Get the screen position of the arrow
+        
+        x_target_size_in_playfield = round((diameter[0] / playfield_size_original[0]) * playfield_size[2]) # Get the size of the target in the playfield
+        y_target_size_in_playfield = round((diameter[1] / playfield_size_original[1]) * playfield_size[3]) # Get the size of the target in the playfield
+
+        x_target_size_in_playfield = max(1, x_target_size_in_playfield) # Make sure the target is at least 1 pixel big
+        y_target_size_in_playfield = max(1, y_target_size_in_playfield) # Make sure the target is at least 1 pixel big
+        
+        # Print the square line by line
+        for row in range(x_target_size_in_playfield):
+            square_line = '#' * y_target_size_in_playfield
+            screen.addstr(x_target_in_playfield + row, y_target_in_playfield, square_line, target_color_pair)
+        
+            
