@@ -1,4 +1,4 @@
-import time, logging, curses
+import time, logging, curses, random
 
 
 from classes.Screen import *
@@ -23,7 +23,8 @@ class Game_Level_1:
         self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
         self.game_step_for_game_loop = 0                        # Integer, used to keep track of the current game step in the game loop
         self.power_up = True                                    # Boolean, used to keep track of the power direction
-        self.targets = [((21, 99), (1, 1))]                     # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
+        self.targets = [((0, 10), (1, 1))]                     # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
+        self.score = 0                                          # Score, the Points
 
     def run(self):
 
@@ -42,7 +43,7 @@ class Game_Level_1:
             target_diameter = 3
             add_test_target(self.screen, self.playfield_size_original, playfield_size, center_of_target, target_diameter) # Draw the test target
             add_targets_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.targets) # Draw the target
-            
+            add_score_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.score) # Draw the score
                     
             match self.game_step_for_game_loop:
                                 
@@ -92,7 +93,8 @@ class Game_Level_1:
                     add_power_to_playfield(self.screen, self.size, self.power, 25)
                         
                     if self.trajectory is None:
-                        logging.error("Trajectory is None")                        
+                        logging.error("Trajectory is None")
+                        continue                     
                     else:
                         step = self.trajectory.calculate_step() # Calculate the next step of the arrow
                         if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
@@ -106,16 +108,17 @@ class Game_Level_1:
 
 
                         if self.trajectory is not None:
-                            for target in self.targets:
+                            for i, target in enumerate(self.targets):
                                 if self.trajectory.old_step is not None:
+                                    
                                     if line_intersects_square(self.trajectory.old_step[0], self.trajectory.old_step[1], step[0], step[1], target):
                                         logging.info("Arrow hit target")
-                                        self.stop_game_and_exit()
+                                        self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
                                         break
                                 else:
                                     if point_inside_square(step[0], step[1], target):
                                         logging.info("Arrow hit target")
-                                        self.stop_game_and_exit()
+                                        self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
                                         break
                         
                         add_arrow_to_playfield(self.screen, self.playfield_size_original, playfield_size, step)
@@ -183,8 +186,23 @@ class Game_Level_1:
             
             case default:
                 logging.error(f"Next step | default case: no case found for game_step_for_game_loop = {self.game_step_for_game_loop}")
+      
                 
+    def move_target_to_new_random_location_and_increase_score(self, target):
+        self.score += 1
+        logging.info(f"New Score: {self.score}")
+        old_target = target
+        (x_position, y_position), diameter = target
+        while old_target[0][0] == x_position or old_target[0][1] == y_position:
+            x_position = random.uniform(0, self.playfield_size_original[0] - diameter[0])
+            y_position = random.uniform(0, self.playfield_size_original[1] - diameter[1])
             
+        
+        return ((x_position, y_position), diameter)
+      
+      
+      
+      
             
 def line_intersects_square(x1, y1, x2, y2, target):
     ((square_x, square_y), (square_width, square_height)) = target

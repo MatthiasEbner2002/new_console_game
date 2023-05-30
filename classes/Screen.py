@@ -298,6 +298,11 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
         # Print the square line by line
         for row in range(x_target_size_in_playfield):
             square_line = '#' * y_target_size_in_playfield
-            screen.addstr(x_target_in_playfield + row, y_target_in_playfield, square_line, target_color_pair)
+            screen.addstr(x_target_in_playfield - row, y_target_in_playfield, square_line, target_color_pair)
         
-            
+
+
+def add_score_to_playfield(screen: curses.window,playfield_size_original, playfield, score):
+    score_color_pair = curses.color_pair(161)
+    score_string = f'Score: {score}'
+    screen.addstr(playfield[0] + playfield[2] + 1, playfield[1], score_string, score_color_pair)
