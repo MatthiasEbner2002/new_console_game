@@ -1,6 +1,7 @@
 import logging, math, curses
 
 from classes.Size import Size
+from classes.Color_util import Color_util
 
 """
 Methods to draw borders and other things on the screen.
@@ -75,7 +76,7 @@ def draw_playfield_borders(screen: curses.window, size:Size):
         return
     
     x_start, y_start, x, y = size.calculate_playfield()
-    border_color_pair = curses.color_pair(3)
+    border_color_pair = Color_util.PLAYFIELD_BORDER_COLOR
     
     for i in range(x_start, x_start + x):
         screen.addch(i, y_start, curses.ACS_VLINE | curses.A_BOLD, border_color_pair)  # Left border line
@@ -104,7 +105,7 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
         step (_type_): The current step of the user, the arrow is getting drawn on this position
     """
     
-    arrow_color_pair = curses.color_pair(161)
+    arrow_color_pair = Color_util.ARROW_COLOR # Get the color of the arrow
     x_arrow = step[0]
     y_arrow = step[1]
     arrow_position = (x_arrow, y_arrow)
@@ -187,7 +188,7 @@ def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: 
     err = dx - dy
 
     while True:
-        screen.addch(y1, x1, get_arrow_line(angle))
+        screen.addch(y1, x1, get_line_to_draw_angel(angle))
 
         if x1 == x2 and y1 == y2:
             break
@@ -201,7 +202,7 @@ def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: 
             y1 += sy
 
 
-def get_arrow_line(angle: int):
+def get_line_to_draw_angel(angle: int):
     """
     returns the line of the arrow, based on the angle
 
@@ -246,7 +247,7 @@ def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original,
         start_position (_type_): The position of the start of the arrow
     """
     
-    arrow_color_pair = curses.color_pair(161)
+    arrow_color_pair = Color_util.ARROW_START_COLOR
     #start_char = curses.ACS_BULLET | curses.A_BOLD
     start_char = 'o'
     x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(playfield_size_original, playfield, (start_position[1], start_position[0])) # Get the screen position of the arrow
@@ -277,13 +278,8 @@ def get_screen_position_from_playfield_position(playfield_size_original, playfie
 
 
 
-def add_test_target(screen: curses.window, playfield_size_original, playfield, target_center, target_diameter):
-    pass
-
-
-
 def add_targets_to_playfield(screen: curses.window, playfield_size_original, playfield_size, targets: list):
-    target_color_pair = curses.color_pair(161)
+    target_color_pair = Color_util.DEFAULT_TARGET_COLOR
 
     for target in targets:
         position, diameter = target
@@ -303,6 +299,6 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
 
 
 def add_score_to_playfield(screen: curses.window,playfield_size_original, playfield, score):
-    score_color_pair = curses.color_pair(161)
+    score_color_pair = Color_util.SCORE_COLOR
     score_string = f'Score: {score}'
     screen.addstr(playfield[0] + playfield[2] + 1, playfield[1], score_string, score_color_pair)

@@ -21,9 +21,10 @@ class Game_Level_1:
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
         self.run_game: bool = True                              # Boolean, used to stop the game loop
         self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
+        self.playfield_size = None
         self.game_step_for_game_loop = 0                        # Integer, used to keep track of the current game step in the game loop
         self.power_up = True                                    # Boolean, used to keep track of the power direction
-        self.targets = [((0, 10), (1, 1))]                     # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
+        self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.score = 0                                          # Score, the Points
 
     def run(self):
@@ -33,106 +34,37 @@ class Game_Level_1:
         
         
         while self.run_game:
-            self.screen.clear()                                             # Clear the screen
-            self.size.update_terminal_size_with_screen_refresh()            # Update the size object with the new terminal size
-            draw_borders(self.screen, self.size)                            # Draw the borders of the screen
-            playfield_size = draw_playfield_borders(self.screen, self.size) # Draw the borders of the playfield
-            add_arrow_start_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.start_location) # Draw the starting location of the arrow
             
-            center_of_target = (10, 50)
-            target_diameter = 3
-            add_test_target(self.screen, self.playfield_size_original, playfield_size, center_of_target, target_diameter) # Draw the test target
-            add_targets_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.targets) # Draw the target
-            add_score_to_playfield(self.screen, self.playfield_size_original, playfield_size, self.score) # Draw the score
+            
+            self.screen.clear()                                                                                             # Clear the screen
+            
+            self.size.update_terminal_size_with_screen_refresh()                                                            # Update the size object with the new terminal size
+            
+            draw_borders(self.screen, self.size)                                                                            # Draw the borders of the screen
+            self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                 # Draw the borders of the playfield
+            add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)    # Draw the starting location of the arrow
+            add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)               # Draw the target
+            add_score_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score)                   # Draw the score
                     
             match self.game_step_for_game_loop:
                                 
                 case 0:
-                    """
-                    This code snippet is used to change the angle of the arrow.
-                    """
-                    self.angle += 3
-                    self.angle %= 360
-                    add_angle_to_playfield(self.screen, self.size, self.angle) # Draw the angle of the arrow
-                    self.screen.refresh()
-                    time.sleep(3 / 120)
-                    
+                    self.step_for_angle()
                     
                 case 1:
-                    """
-                    This code snippet is used to change the power of the arrow.
-                    """
-                    # starts at 0, goes to 25, then starts at 0 again
-                    # self.power = (self.power + 1) % (self.max_power + 1)
-                    
-                    # starts at 0, goes to 25, then back to 0
-                    if self.power_up:
-                        self.power += 1
-                    else:
-                        self.power -= 1
-                    
-                    if self.power == self.max_power:
-                        self.power_up = False
-                        
-                    elif self.power == 0:
-                        self.power_up = True
-                        
-                    
                     
                     add_angle_to_playfield(self.screen, self.size, self.angle)
-                    add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
-                    self.screen.refresh()
-                    time.sleep(4 / 120)
+                    self.step_for_power()
                     
                 case 2: 
-                    """
-                    This code snippet is used to calculate the trajectory of the arrow.
-                    """
-                    
                     add_angle_to_playfield(self.screen, self.size, self.angle)
-                    add_power_to_playfield(self.screen, self.size, self.power, 25)
-                        
-                    if self.trajectory is None:
-                        logging.error("Trajectory is None")
-                        continue                     
-                    else:
-                        step = self.trajectory.calculate_step() # Calculate the next step of the arrow
-                        if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
-                            logging.info("Arrow is out of bounds")
-                            if self.trajectory.old_step is not None:
-                                self.start_location = (self.trajectory.old_step[1], self.trajectory.old_step[0])
-                                self.remove_arrow_and_set_input_to_get_new_angle()
-                            else:
-                                logging.error("Old_step is None")
-                                self.stop_game_and_exit()
-
-
-                        if self.trajectory is not None:
-                            for i, target in enumerate(self.targets):
-                                if self.trajectory.old_step is not None:
-                                    
-                                    if line_intersects_square(self.trajectory.old_step[0], self.trajectory.old_step[1], step[0], step[1], target):
-                                        logging.info("Arrow hit target")
-                                        self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
-                                        break
-                                else:
-                                    if point_inside_square(step[0], step[1], target):
-                                        logging.info("Arrow hit target")
-                                        self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
-                                        break
-                        
-                        add_arrow_to_playfield(self.screen, self.playfield_size_original, playfield_size, step)
-                        self.screen.refresh()
-                        time.sleep(0.01)
+                    add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
+                    self.step_for_trajectory()
+                    
+                    
+                    
         logging.info("Game loop exited.")
                     
-            
-            
-    def _render():
-        pass
-    
-    def _update():
-        pass
     
     def remove_arrow_and_set_input_to_get_new_angle(self):
         self.game_step_for_game_loop = 0
@@ -199,6 +131,91 @@ class Game_Level_1:
             
         
         return ((x_position, y_position), diameter)
+      
+      
+    def step_for_angle(self):
+        """
+        This code snippet is used to change the angle of the arrow.
+        """
+        
+        self.angle += 3
+        self.angle %= 360
+        add_angle_to_playfield(self.screen, self.size, self.angle) # Draw the angle of the arrow
+        self.screen.refresh()
+        time.sleep(3 / 120)
+        
+        
+    def step_for_power(self):
+        """
+        This code snippet is used to change the power of the arrow.
+        """
+        
+        # starts at 0, goes to 25, then starts at 0 again
+        # self.power = (self.power + 1) % (self.max_power + 1)
+
+        # starts at 0, goes to 25, then back to 0
+        
+        if self.power_up:
+            self.power += 1
+        else:
+            self.power -= 1
+
+        if self.power == self.max_power:
+            self.power_up = False
+            
+        elif self.power == 0:
+            self.power_up = True
+            
+
+        add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
+        self.screen.refresh()
+        time.sleep(4 / 120)
+    
+    
+    def step_for_trajectory(self):
+        """
+        This code snippet is used to calculate the trajectory of the arrow.
+        """
+            
+        if self.trajectory is None:
+            logging.error("Trajectory is None")
+            return   
+                          
+        else:
+            step = self.trajectory.calculate_step() # Calculate the next position of the arrow
+            if step[0] > self.playfield_size_original[0] or step[0] < 0 or step[1] > self.playfield_size_original[1] or step[1] < 0:
+                logging.info("Arrow is out of bounds")
+                if self.trajectory.old_step is not None:
+                    self.start_location = (self.trajectory.old_step[1], self.trajectory.old_step[0])
+                    self.remove_arrow_and_set_input_to_get_new_angle()
+                else:
+                    logging.error("Old_step is None")
+                    self.stop_game_and_exit()
+
+
+            if self.trajectory is not None:
+                for i, target in enumerate(self.targets):
+                    if self.trajectory.old_step is not None:
+                        
+                        if line_intersects_square(self.trajectory.old_step[0], self.trajectory.old_step[1], step[0], step[1], target):
+                            logging.info("Arrow hit target")
+                            self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
+                            break
+                    else:
+                        if point_inside_square(step[0], step[1], target):
+                            logging.info("Arrow hit target")
+                            self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
+                            break
+            
+            add_arrow_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, step)
+            self.screen.refresh()
+            time.sleep(0.01)  
+
+      
+      
+      
+      
+      
       
       
       

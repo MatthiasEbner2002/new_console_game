@@ -4,6 +4,7 @@ import atexit
 
 # My file import
 from classes.Game_Level_1 import Game_Level_1
+from classes.Color_util import Color_util
 
 def add_logging():
     format1 = '%(asctime)s %(levelname)s [%(filename)s - %(funcName)s(): %(lineno)s]: %(message)s'
@@ -47,13 +48,13 @@ def main(screen):
     # init 255 colors 
     for i in range(0, 255):
         curses.init_pair(i + 1, i, -1)
+    Color_util.init_colors()
         
     curses.curs_set(0)
     
     atexit.register(exit_handler)
     
     add_logging()
-    
     log_start()
     
     
