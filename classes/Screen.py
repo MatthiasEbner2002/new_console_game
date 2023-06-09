@@ -2,6 +2,7 @@ import logging, math, curses
 
 from classes.Size import Size
 from classes.Color_util import Color_util
+from classes.Input import Input
 
 """
 Methods to draw borders and other things on the screen.
@@ -298,7 +299,105 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
         
 
 
-def add_score_to_playfield(screen: curses.window,playfield_size_original, playfield, score):
+def add_score_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size:Size):
     score_color_pair = Color_util.SCORE_COLOR
     score_string = f'Score: {score}'
-    screen.addstr(playfield[0] + playfield[2] + 1, playfield[1], score_string, score_color_pair)
+    score_x = size.get_x_for_score()
+    score_y = size.get_y_for_score()
+    screen.addstr(score_x, score_y, score_string, score_color_pair)
+    
+    
+def add_info_for_level(screen: curses.window, size: Size, info_list: list, input: Input):
+    x_start  = int(size.get_x_for_border() * 0.1)
+    y_start  = int(size.get_y_for_border() * 0.1)
+    x_length = int(size.get_x_for_border() * 0.8)
+    y_length = int(size.get_y_for_border() * 0.8)
+    draw_full_lined_border(
+        screen=screen, 
+        x_start=x_start, 
+        y_start=y_start, 
+        x_length=x_length, 
+        y_length=y_length
+    )
+    
+    line_count = 0
+    max_line_count = x_length - 1
+    max_line_length = y_length - 3
+    new_info_strings = []   # split strings that are to long to print
+    for i,info_string in enumerate(info_list):
+        if len(info_string) > max_line_length:
+            new_strings = split_long_string(info_string,max_line_length)
+            new_info_strings += new_strings
+            line_count += len(new_strings)
+        else:
+            new_info_strings.append(info_string)
+            line_count += 1
+            
+    input.update_info_input(max_line_count, len(new_info_strings))
+
+    add_scoll_bar_for_info(
+        screen=screen, 
+        input=input, 
+        x_start=x_start,
+        x_length=x_length,
+        y_start=y_start,
+        y_length=y_length)
+    for j in range(min(input.lines_count, input.max_line_count)):
+        screen.addstr(x_start + 1 + j, y_start + 1, new_info_strings[j + input.line_position])
+
+
+def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_start: int, x_length: int, y_length: int):
+    screen.addch(x_start + 1, y_start + y_length - 1, 'T')
+    screen.addch(x_start + x_length - 1, y_start + y_length - 1, 't')
+    len_bar = max(1, int((input.max_line_count - 1) * ((input.max_line_count - 1) / input.lines_count)))
+
+
+    x_start_bar = int((input.max_line_count - 1) * (input.line_position / input.lines_count))
+    
+    for i in range(x_start + 2, x_start + x_length - 1):
+        screen.addch(i, y_start + y_length - 1, '|')
+        
+        
+    for i in range(x_start_bar, x_start_bar + len_bar):
+        screen.addch(x_start + i + 2, y_start + y_length - 1, '#')
+
+
+def split_long_string(string, max_length: int):
+    """splits a string into substring with a max_len
+
+    Args:
+        string (str): the string to split
+        max_length (int): the max_length the string should have
+
+    Returns:
+        _type_: list of new strings with the content of the old one
+    """
+    
+    substrings = []
+    len_string = len(string)
+    for i in range (0, len_string, max_length):
+        substrings.append(string[i : i+max_length])
+    return substrings
+
+
+def draw_full_lined_border(screen: curses.window, x_start: int, y_start: int, x_length:int,  y_length: int):
+    if screen is None:
+        logging.warning("Screen is not set")
+        return
+
+    # Draw horizontal lines
+    for i in range(y_start, y_start + y_length):
+        screen.addch(x_start, i, curses.ACS_HLINE)  # Top border line
+        screen.addch(x_start + x_length, i, curses.ACS_HLINE)  # Bottom border line
+
+    # Draw vertical lines
+    for i in range(x_start, x_start + x_length):
+        screen.addch(i, y_start, curses.ACS_VLINE)  # Left border line
+        screen.addch(i, y_start + y_length, curses.ACS_VLINE)  # Right border line
+        
+        
+    # Draw corner characters
+    screen.addch(x_start, y_start, curses.ACS_ULCORNER)  # Upper left corner
+    screen.addch(x_start, y_start + y_length, curses.ACS_URCORNER)  # Upper right corner
+    screen.addch(x_start + x_length, y_start, curses.ACS_LLCORNER)  # Lower left corner
+    screen.addch(x_start + x_length, y_start + y_length, curses.ACS_LRCORNER)  # Lower right corner

@@ -14,16 +14,14 @@ class Game_Level_1:
         self.size: Size = Size.from_terminal_size(screen)       # Size object, handles screen size and calculations for screen positions
         self.power: int = 0                                     # Launch power   
         self.max_power: int  = 25                               # Maximum launch power
-        self.angle: int = 45                                    # Launch angle in degrees
         self.gravity: float = 9.8                               # Acceleration due to gravity    
         self.start_location = (1, 1)                            # Starting location of the arrow
-        self.input: Input = Input(self)                         # Input object, handles keyboard input
+        self.input: Input = Input(self, self.max_power)         # Input object, handles keyboard input
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
         self.run_game: bool = True                              # Boolean, used to stop the game loop
         self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
         self.playfield_size = None
-        self.game_step_for_game_loop = 0                        # Integer, used to keep track of the current game step in the game loop
-        self.power_up = True                                    # Boolean, used to keep track of the power direction
+        self.game_step_for_game_loop: int = 0                   # Integer, used to keep track of the current game step in the game loop
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.score = 0                                          # Score, the Points
 
@@ -35,6 +33,9 @@ class Game_Level_1:
         
         while self.run_game:
             
+            if self.input.show_info:
+                self.show_info()
+            
             
             self.screen.clear()                                                                                             # Clear the screen
             
@@ -44,22 +45,27 @@ class Game_Level_1:
             self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                 # Draw the borders of the playfield
             add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)    # Draw the starting location of the arrow
             add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)               # Draw the target
-            add_score_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score)                   # Draw the score
+            add_score_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score, self.size)                   # Draw the score
                     
             match self.game_step_for_game_loop:
                                 
                 case 0:
-                    self.step_for_angle()
+                    
+                    add_angle_to_playfield(self.screen, self.size, self.input.angle)
+                    add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
+                    self.screen.refresh()
+                    
+                    time.sleep(2 / 120)
+                    
                     
                 case 1:
-                    
-                    add_angle_to_playfield(self.screen, self.size, self.angle)
-                    self.step_for_power()
-                    
-                case 2: 
-                    add_angle_to_playfield(self.screen, self.size, self.angle)
-                    add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
+                                        
+                    add_angle_to_playfield(self.screen, self.size, self.input.angle)
+                    add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
                     self.step_for_trajectory()
+                    time.sleep(0.01) 
+ 
+                    
                     
                     
                     
@@ -102,16 +108,11 @@ class Game_Level_1:
         
         match self.game_step_for_game_loop:
             case 0:
-                logging.info("Next step | getting angle finished") 
+                logging.info("Next step | getting angle / power finished") 
+                self.trajectory = ArrowTrajectory(self.start_location, self.input.power, self.input.angle, self.gravity)                    
                 self.game_step_for_game_loop = 1
 
             case 1:
-                logging.info("Next step | getting power finished")
-                
-                self.trajectory = ArrowTrajectory(self.start_location, self.power, self.angle, self.gravity)                    
-                self.game_step_for_game_loop = 2
-                
-            case 2:
                 logging.info("Next step | trajectory finished")
                 self.stop_arrow_and_remove_arrow_and_safe_last_position()
                 self.game_step_for_game_loop = 0
@@ -137,39 +138,18 @@ class Game_Level_1:
         """
         This code snippet is used to change the angle of the arrow.
         """
-        
-        self.angle += 3
-        self.angle %= 360
-        add_angle_to_playfield(self.screen, self.size, self.angle) # Draw the angle of the arrow
+
+        add_angle_to_playfield(self.screen, self.size, self.input.angle) # Draw the angle of the arrow
         self.screen.refresh()
-        time.sleep(3 / 120)
         
         
     def step_for_power(self):
         """
         This code snippet is used to change the power of the arrow.
         """
-        
-        # starts at 0, goes to 25, then starts at 0 again
-        # self.power = (self.power + 1) % (self.max_power + 1)
 
-        # starts at 0, goes to 25, then back to 0
-        
-        if self.power_up:
-            self.power += 1
-        else:
-            self.power -= 1
-
-        if self.power == self.max_power:
-            self.power_up = False
-            
-        elif self.power == 0:
-            self.power_up = True
-            
-
-        add_power_to_playfield(self.screen, self.size, self.power, self.max_power)
+        add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
         self.screen.refresh()
-        time.sleep(4 / 120)
     
     
     def step_for_trajectory(self):
@@ -209,17 +189,27 @@ class Game_Level_1:
             
             add_arrow_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, step)
             self.screen.refresh()
-            time.sleep(0.01)  
+   
+    def show_info(self):
+        while self.input.show_info:
+            self.screen.clear()                                                                                             # Clear the screen
+            self.size.update_terminal_size_with_screen_refresh()# Update the size object with the new terminal size
 
+            self.input
+            add_info_for_level(self.screen, self.size, self.get_infos(), self.input)
+
+            self.screen.refresh()
+
+            time.sleep(1/60)
+            
+        logging.info("exit the info Box for level.")
       
-      
-      
-      
-      
-      
-      
-      
-      
+    def get_infos(self):
+        
+        info_list = []
+        for i in range (100):
+            info_list.append("This is a test info: test test test test test test test test" + str(i))
+        return info_list
             
 def line_intersects_square(x1, y1, x2, y2, target):
     ((square_x, square_y), (square_width, square_height)) = target
