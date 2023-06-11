@@ -347,19 +347,21 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
 
 
 def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_start: int, x_length: int, y_length: int):
-    screen.addch(x_start + 1, y_start + y_length - 1, 'T')
-    screen.addch(x_start + x_length - 1, y_start + y_length - 1, 't')
+    
+    screen.addch(x_start + 1, y_start + y_length - 1, '┬')
+    screen.addch(x_start + x_length - 1, y_start + y_length - 1, '┴')
+    
     len_bar = max(1, int((input.max_line_count - 1) * ((input.max_line_count - 1) / input.lines_count)))
 
 
     x_start_bar = int((input.max_line_count - 1) * (input.line_position / input.lines_count))
     
     for i in range(x_start + 2, x_start + x_length - 1):
-        screen.addch(i, y_start + y_length - 1, '|')
+        screen.addch(i, y_start + y_length - 1, curses.ACS_VLINE)
         
         
     for i in range(x_start_bar, x_start_bar + len_bar):
-        screen.addch(x_start + i + 2, y_start + y_length - 1, '#')
+        screen.addch(x_start + i + 2, y_start + y_length - 1, '█')
 
 
 def split_long_string(string, max_length: int):

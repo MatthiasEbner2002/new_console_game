@@ -42,8 +42,8 @@ class Input:
             
             case Key.up:
                 if self.show_info:
-                    if self.line_position < self.lines_count - self.max_line_count:
-                        self.line_position += 1
+                    if self.line_position > 0:
+                        self.line_position -= 1
                 else:
                     self.up = 1
                     self.angle += 5
@@ -51,8 +51,8 @@ class Input:
                     
             case Key.down:
                 if self.show_info:
-                    if self.line_position > 0:
-                        self.line_position -= 1
+                    if self.line_position < self.lines_count - self.max_line_count:
+                        self.line_position += 1
                 else:
                     self.down = 1
                     self.angle -= 5
