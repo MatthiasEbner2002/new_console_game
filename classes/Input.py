@@ -37,7 +37,6 @@ class Input:
         
         match key:
             case keyboard.KeyCode(char='i'):
-                logging.debug("i was pressed ")
                 self.show_info = not self.show_info
             
             case Key.up:
@@ -66,6 +65,7 @@ class Input:
                     self.power += 1
             case keyboard.KeyCode(char='q'):
                 self.q = 1
+                self.show_info = False
                 self.level.stop_game_and_exit()
             case Key.space:
                 self.level.next_step_for_game()
@@ -102,4 +102,4 @@ class Input:
         self.lines_count = lines
         
         if self.line_position + max_line_count > self.lines_count:
-            self.line_position = self.lines_count - self.max_line_count
+            self.line_position = max(0, self.lines_count - self.max_line_count)

@@ -213,7 +213,7 @@ class Size:
         """
         
         """
-        return 10
+        return 5
     
     def get_x_for_progress_bar(self):
         """

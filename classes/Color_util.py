@@ -17,4 +17,6 @@ class Color_util:
         cls.ARROW_START_COLOR = curses.color_pair(160)
         cls.DEFAULT_TARGET_COLOR = curses.color_pair(161)
         cls.SCORE_COLOR = curses.color_pair(130)
+        cls.INFO_STAT_COLOR = curses.color_pair(50)
+        cls.QUIT_STAT_COLOR = curses.color_pair(161)
         

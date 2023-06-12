@@ -299,19 +299,30 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
         
 
 
-def add_score_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size:Size):
+def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size:Size):
     score_color_pair = Color_util.SCORE_COLOR
+    info_color_pair  = Color_util.INFO_STAT_COLOR
+    quit_color_pair  = Color_util.QUIT_STAT_COLOR
+
     score_string = f'Score: {score}'
+
     score_x = size.get_x_for_score()
     score_y = size.get_y_for_score()
     screen.addstr(score_x, score_y, score_string, score_color_pair)
     
+    info_string  = "[I]nfo"
+    screen.addstr(score_x, score_y + len(score_string) + 1, info_string, info_color_pair)
+
+    quit_string  = "[Q]uit"
+    screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) + 1, quit_string, quit_color_pair)
+        
+    
     
 def add_info_for_level(screen: curses.window, size: Size, info_list: list, input: Input):
-    x_start  = int(size.get_x_for_border() * 0.1)
-    y_start  = int(size.get_y_for_border() * 0.1)
-    x_length = int(size.get_x_for_border() * 0.8)
-    y_length = int(size.get_y_for_border() * 0.8)
+    x_start  = int(size.get_x_for_border() * 0.1) # Start 10% from the left
+    y_start  = int(size.get_y_for_border() * 0.1) # Start 10% from the top
+    x_length = int(size.get_x_for_border() * 0.8) # 80% of the width
+    y_length = int(size.get_y_for_border() * 0.8) # 80% of the height
     draw_full_lined_border(
         screen=screen, 
         x_start=x_start, 
@@ -319,6 +330,10 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
         x_length=x_length, 
         y_length=y_length
     )
+    
+    if  info_list == None or len(info_list) == 0:
+        logging.warning('No info for level given')
+        info_list = ["No info for level found"]
     
     line_count = 0
     max_line_count = x_length - 1
