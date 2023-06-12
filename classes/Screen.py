@@ -334,32 +334,47 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
             line_count += 1
             
     input.update_info_input(max_line_count, len(new_info_strings))
-
-    add_scoll_bar_for_info(
-        screen=screen, 
-        input=input, 
-        x_start=x_start,
-        x_length=x_length,
-        y_start=y_start,
-        y_length=y_length)
+    if input.max_line_count <= input.lines_count:
+        add_scoll_bar_for_info(
+            screen=screen, 
+            input=input, 
+            x_start=x_start,
+            x_length=x_length,
+            y_start=y_start,
+            y_length=y_length)
     for j in range(min(input.lines_count, input.max_line_count)):
         screen.addstr(x_start + 1 + j, y_start + 1, new_info_strings[j + input.line_position])
 
 
 def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_start: int, x_length: int, y_length: int):
+    """
+    Adds a scroll bar to the info box
     
-    screen.addch(x_start + 1, y_start + y_length - 1, '┬')
-    screen.addch(x_start + x_length - 1, y_start + y_length - 1, '┴')
+
+    Args:
+        screen (curses.window): _description_
+        input (Input): _description_
+        x_start (int): _description_
+        y_start (int): _description_
+        x_length (int): _description_
+        y_length (int): _description_
+    """
     
-    len_bar = max(1, int((input.max_line_count - 1) * ((input.max_line_count - 1) / input.lines_count)))
+    screen.addch(x_start + 1, y_start + y_length - 1, '┬')              # top Border
+    screen.addch(x_start + x_length - 1, y_start + y_length - 1, '┴')   # bottom Border
+    
+    len_bar = max(1, round((input.max_line_count - 1) * ((input.max_line_count - 1) / input.lines_count)))
 
 
-    x_start_bar = int((input.max_line_count - 1) * (input.line_position / input.lines_count))
+    x_start_bar = round((input.max_line_count - 1) * (input.line_position / input.lines_count))
     
+    if len_bar + x_start_bar >= input.max_line_count - 1:
+        x_start_bar -= 1
+    # vertical line for the scroll bar - thin
     for i in range(x_start + 2, x_start + x_length - 1):
         screen.addch(i, y_start + y_length - 1, curses.ACS_VLINE)
         
-        
+    # vertical line for the scroll bar - thick
     for i in range(x_start_bar, x_start_bar + len_bar):
         screen.addch(x_start + i + 2, y_start + y_length - 1, '█')
 
