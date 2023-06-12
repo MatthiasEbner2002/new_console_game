@@ -1,4 +1,4 @@
-import time, logging, curses, random
+import time, logging, curses, random, numpy as np
 
 
 from classes.Screen import *
@@ -10,6 +10,7 @@ from classes.Input import Input
 
 class Game_Level_1:
     def __init__(self, screen: curses.window):
+        
         self.screen: curses.window = screen                     # Curses window object, handles screen refreshes
         self.size: Size = Size.from_terminal_size(screen)       # Size object, handles screen size and calculations for screen positions
         self.power: int = 0                                     # Launch power   
@@ -24,6 +25,7 @@ class Game_Level_1:
         self.game_step_for_game_loop: int = 0                   # Integer, used to keep track of the current game step in the game loop
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.score = 0                                          # Score, the Points
+        self.arrow_radius = 0.5                                 # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
 
     def run(self):
 
@@ -33,7 +35,7 @@ class Game_Level_1:
         
         while self.run_game:
             
-            if self.input.show_info:
+            if self.input.show_info: # Show info
                 self.show_info()
             
             
@@ -45,11 +47,11 @@ class Game_Level_1:
             self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                 # Draw the borders of the playfield
             add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)    # Draw the starting location of the arrow
             add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)               # Draw the target
-            add_score_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score, self.size)                   # Draw the score
+            add_top_stats_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score, self.size)                   # Draw the score
                     
             match self.game_step_for_game_loop:
                                 
-                case 0:
+                case 0: # Getting angle / power
                     
                     add_angle_to_playfield(self.screen, self.size, self.input.angle)
                     add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
@@ -58,7 +60,7 @@ class Game_Level_1:
                     time.sleep(2 / 120)
                     
                     
-                case 1:
+                case 1: # Trajectory calculation
                                         
                     add_angle_to_playfield(self.screen, self.size, self.input.angle)
                     add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
@@ -177,7 +179,7 @@ class Game_Level_1:
                 for i, target in enumerate(self.targets):
                     if self.trajectory.old_step is not None:
                         
-                        if line_intersects_square(self.trajectory.old_step[0], self.trajectory.old_step[1], step[0], step[1], target):
+                        if line_intersects_square(self.trajectory.old_step[0], self.trajectory.old_step[1], step[0], step[1], target, self.arrow_radius):
                             logging.info("Arrow hit target")
                             self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
                             break
@@ -192,10 +194,9 @@ class Game_Level_1:
    
     def show_info(self):
         while self.input.show_info:
-            self.screen.clear()                                                                                             # Clear the screen
-            self.size.update_terminal_size_with_screen_refresh()# Update the size object with the new terminal size
-
-            self.input
+            self.screen.clear()                                                                                         # Clear the screen
+            self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
+            
             add_info_for_level(self.screen, self.size, self.get_infos(), self.input)
 
             self.screen.refresh()
@@ -205,24 +206,45 @@ class Game_Level_1:
         logging.info("exit the info Box for level.")
       
     def get_infos(self):
+        ret = []
         
+        ret.append("INFOS FOR LEVEL")
+        ret.append("")
+        ret.append("Press 'arrow_up' to increase the angle of the arrow")
+        ret.append("Press 'arrow_down' to decrease the angle of the arrow")
+        ret.append("")
+        ret.append("Press 'arrow_right' to increase the power of the arrow")
+        ret.append("Press 'arrow_left' to decrease the power of the arrow")
+        ret.append("press 'space' to shoot the arrow")
+        ret.append("")
+        ret.append("Press 'i' to show this info box")
+        ret.append("")
+        ret.append("Press 'q' to quit the game")
+        
+        
+        return ret
+       
+    def get_test_infos(self):
         info_list = []
         for i in range (100):
             info_list.append("This is a test info: test test test test test test test test" + str(i))
         return info_list
-            
-def line_intersects_square(x1, y1, x2, y2, target):
+
+def line_intersects_square(x1, y1, x2, y2, target, radius_arrow):
     ((square_x, square_y), (square_width, square_height)) = target
     # Check if any of the line endpoints are inside the square
     if point_inside_square(x1, y1, target) or \
             point_inside_square(x2, y2,target):
-        logging.debug("Point inside square")
+        return True
+    
+    # Check if radius of circle intersects any of the square's sides
+    new_nearest_point = calculate_nearest_point(x1, y1, square_x + square_width/2, square_y + square_height/2 , radius_arrow)
+
+    if point_inside_square(new_nearest_point[0], new_nearest_point[1], target): # not jet tested TODO: TEST
         return True
 
     # Check if the line intersects any of the square's sides
     """
-
-
     if line_intersects_side(x1, y1, x2, y2, square_x, square_y, square_x + square_width, square_y) or \
             line_intersects_side(x1, y1, x2, y2, square_x + square_width, square_y, square_x + square_width, square_y + square_height) or \
             line_intersects_side(x1, y1, x2, y2, square_x + square_width, square_y + square_height, square_x, square_y + square_height) or \
@@ -233,6 +255,34 @@ def line_intersects_square(x1, y1, x2, y2, target):
 
     return False
 
+def calculate_nearest_point(circle_x, cirle_y, point_x, point_y, r):
+    """
+    Calculates the nearest point on the circle to the point.
+    
+
+    Args:
+        circle_x (_type_): _description_
+        cirle_y (_type_): _description_
+        point_x (_type_): _description_
+        point_y (_type_): _description_
+        r (_type_): _description_
+
+    Returns:
+        [x,y]: new point on the circle
+    """
+    
+    point1 = [circle_x, cirle_y]
+    point2 = [point_x, point_y]
+    
+    vector = np.array(point2) - np.array(point1)
+    normalized_vector = vector / np.linalg.norm(vector)
+    new_point = np.array(point1) + normalized_vector * r
+    
+    # Check if the distance between point1 and new_point is greater than the distance between point1 and point2
+    if np.linalg.norm(new_point - np.array(point1)) > np.linalg.norm(vector):
+        new_point = np.array(point2)
+    
+    return new_point.tolist()
 
 def point_inside_square(x, y, target):
     ((square_x, square_y), (square_width, square_height)) = target
