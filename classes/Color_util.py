@@ -19,4 +19,4 @@ class Color_util:
         cls.SCORE_COLOR = curses.color_pair(130)
         cls.INFO_STAT_COLOR = curses.color_pair(50)
         cls.QUIT_STAT_COLOR = curses.color_pair(161)
-        
+        cls.CHEAT_STAT_COLOR = curses.color_pair(200)

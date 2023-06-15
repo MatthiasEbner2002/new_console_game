@@ -3,6 +3,7 @@ import logging, math, curses
 from classes.Size import Size
 from classes.Color_util import Color_util
 from classes.Input import Input
+from classes.ArrowTrajectory import ArrowTrajectory
 
 """
 Methods to draw borders and other things on the screen.
@@ -303,6 +304,7 @@ def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, p
     score_color_pair = Color_util.SCORE_COLOR
     info_color_pair  = Color_util.INFO_STAT_COLOR
     quit_color_pair  = Color_util.QUIT_STAT_COLOR
+    cheat_color_oair = Color_util.CHEAT_STAT_COLOR
 
     score_string = f'Score: {score}'
 
@@ -314,7 +316,11 @@ def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, p
     screen.addstr(score_x, score_y + len(score_string) + 1, info_string, info_color_pair)
 
     quit_string  = "[Q]uit"
-    screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) + 1, quit_string, quit_color_pair)
+    screen.addstr(score_x, score_y + len(score_string) + 1 + len(info_string) + 1, quit_string, quit_color_pair)
+    
+    cheat_string = "[C]heats"
+    screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) + 1 + len(quit_string) + 1, cheat_string, cheat_color_oair)
+    
         
     
     
@@ -323,6 +329,7 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
     y_start  = int(size.get_y_for_border() * 0.1) # Start 10% from the top
     x_length = int(size.get_x_for_border() * 0.8) # 80% of the width
     y_length = int(size.get_y_for_border() * 0.8) # 80% of the height
+    
     draw_full_lined_border(
         screen=screen, 
         x_start=x_start, 
@@ -349,7 +356,8 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
             line_count += 1
             
     input.update_info_input(max_line_count, len(new_info_strings))
-    if input.max_line_count <= input.lines_count:
+    
+    if input.max_line_count < input.lines_count:
         add_scoll_bar_for_info(
             screen=screen, 
             input=input, 
@@ -433,3 +441,20 @@ def draw_full_lined_border(screen: curses.window, x_start: int, y_start: int, x_
     screen.addch(x_start, y_start + y_length, curses.ACS_URCORNER)  # Upper right corner
     screen.addch(x_start + x_length, y_start, curses.ACS_LLCORNER)  # Lower left corner
     screen.addch(x_start + x_length, y_start + y_length, curses.ACS_LRCORNER)  # Lower right corner
+
+
+def add_cheats_to_playfield(screen: curses.window, size: Size, playfield, playfield_size_original, trajectory: ArrowTrajectory):
+    """Adds the cheats to the playfield
+
+    Args:
+        screen (curses.window): the screen to draw on
+        size (Size): the size of the screen
+        playfield (Playfield): the playfield to draw
+        playfield_size_original (Size): the original size of the playfield
+        trajectory (ArrowTrajectory): the trajectory to draw
+    """
+    if screen is None:
+        logging.warning("Screen is not set")
+        return
+    for step in trajectory.all_steps:
+        add_arrow_to_playfield(screen, playfield_size_original, playfield, step)

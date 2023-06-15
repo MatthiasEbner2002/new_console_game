@@ -25,8 +25,8 @@ class Game_Level_1:
         self.game_step_for_game_loop: int = 0                   # Integer, used to keep track of the current game step in the game loop
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.score = 0                                          # Score, the Points
-        self.arrow_radius = 0.5                                 # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
-
+        self.arrow_radius = 0.25                                # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
+        self.cheat_trajectory: ArrowTrajectory = None                            # ArrowTrajectory object, used to show the trajectory of the arrow when the cheats are enabled
     def run(self):
 
         
@@ -36,17 +36,17 @@ class Game_Level_1:
         while self.run_game:
             
             if self.input.show_info: # Show info
-                self.show_info()
+                self.show_info_in_own_loop()
             
             
-            self.screen.clear()                                                                                             # Clear the screen
+            self.screen.clear()                                                                                                                 # Clear the screen
             
-            self.size.update_terminal_size_with_screen_refresh()                                                            # Update the size object with the new terminal size
+            self.size.update_terminal_size_with_screen_refresh()                                                                                # Update the size object with the new terminal size
             
-            draw_borders(self.screen, self.size)                                                                            # Draw the borders of the screen
-            self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                 # Draw the borders of the playfield
-            add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)    # Draw the starting location of the arrow
-            add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)               # Draw the target
+            draw_borders(self.screen, self.size)                                                                                                # Draw the borders of the screen
+            self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                                # Draw the borders of the playfield
+            add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)                   # Draw the starting location of the arrow
+            add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)                              # Draw the target
             add_top_stats_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score, self.size)                   # Draw the score
                     
             match self.game_step_for_game_loop:
@@ -55,17 +55,27 @@ class Game_Level_1:
                     
                     add_angle_to_playfield(self.screen, self.size, self.input.angle)
                     add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
+                    
+                    
+                    if self.input.cheats:
+                        if self.cheat_trajectory is None or self.cheat_trajectory.angle != self.input.angle or self.cheat_trajectory.start_power != self.input.power:
+                            # if cheat_trajectory is None or the input values (angle, power) changed, update the trajectory
+                            
+                            self.cheat_trajectory = ArrowTrajectory(self.start_location, self.input.power, self.input.angle, self.gravity)
+                            self.cheat_trajectory.calculate_all_steps(self.playfield_size_original)
+                        add_cheats_to_playfield(self.screen, self.size, self.playfield_size, self.playfield_size_original, self.cheat_trajectory)
+                    
                     self.screen.refresh()
                     
-                    time.sleep(2 / 120)
+                    time.sleep(1 / 60)
                     
                     
                 case 1: # Trajectory calculation
-                                        
+                    self.cheat_trajectory = None                    
                     add_angle_to_playfield(self.screen, self.size, self.input.angle)
                     add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
                     self.step_for_trajectory()
-                    time.sleep(0.01) 
+                    time.sleep(1 / 60) 
  
                     
                     
@@ -191,10 +201,11 @@ class Game_Level_1:
             
             add_arrow_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, step)
             self.screen.refresh()
+
    
-    def show_info(self):
+    def show_info_in_own_loop(self):
         while self.input.show_info:
-            self.screen.clear()                                                                                         # Clear the screen
+            self.screen.clear()                                  # Clear the screen
             self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
             
             add_info_for_level(self.screen, self.size, self.get_infos(), self.input)
@@ -204,6 +215,7 @@ class Game_Level_1:
             time.sleep(1/60)
             
         logging.info("exit the info Box for level.")
+
       
     def get_infos(self):
         ret = []
@@ -220,15 +232,19 @@ class Game_Level_1:
         ret.append("Press 'i' to show this info box")
         ret.append("")
         ret.append("Press 'q' to quit the game")
+        ret.append("")
+        ret.append("Press 'c' to activale cheats")
         
         
         return ret
+
        
     def get_test_infos(self):
         info_list = []
         for i in range (100):
             info_list.append("This is a test info: test test test test test test test test" + str(i))
         return info_list
+
 
 def line_intersects_square(x1, y1, x2, y2, target, radius_arrow):
     ((square_x, square_y), (square_width, square_height)) = target
@@ -254,6 +270,7 @@ def line_intersects_square(x1, y1, x2, y2, target, radius_arrow):
     """
 
     return False
+
 
 def calculate_nearest_point(circle_x, cirle_y, point_x, point_y, r):
     """
@@ -283,6 +300,7 @@ def calculate_nearest_point(circle_x, cirle_y, point_x, point_y, r):
         new_point = np.array(point2)
     
     return new_point.tolist()
+
 
 def point_inside_square(x, y, target):
     ((square_x, square_y), (square_width, square_height)) = target

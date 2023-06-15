@@ -1,7 +1,7 @@
 import math
 
 class ArrowTrajectory:
-    def __init__(self, start_location, start_power, angle, gravity):
+    def __init__(self, start_location, start_power, angle, gravity, time_interval=0.02):
         self.start_location = start_location                            # start_location: Tuple[float, float]
         self.start_power = start_power                                  # start_power: int
         self.angle = angle                                              # angle: int
@@ -11,7 +11,10 @@ class ArrowTrajectory:
         
         self.actual_step = self.start_location
         self.old_step = None
-    
+        
+        self.time_interval = time_interval                              # the time interval for calculating the steps : float
+
+        self.all_steps = []                                             # all_steps: List[Tuple[float, float, float, str]] list of all steps
     def calculate_step(self):
         """
         Calculates the next step of the arrow's trajectory.
@@ -21,12 +24,11 @@ class ArrowTrajectory:
             Tuple[float, float, float, str]: (x, y, direction, arrow)
         """
         self.old_step = self.actual_step        # safe the old step, so we can set the arrow position back to the old step if the arrow is out of bounds 
-        time_interval = 0.02                    # then time_interval for calculating the steps
         current_time = self.current_time
         x: float = self.start_location[0] + self.start_power * math.cos(math.radians(self.angle)) * current_time
         y: float = self.start_location[1] + (self.start_power * math.sin(math.radians(self.angle)) * current_time) - (0.5 * self.gravity * current_time ** 2)
         direction = math.degrees(math.atan2(self.start_power * math.sin(math.radians(self.angle)) - (self.gravity * current_time), self.start_power * math.cos(math.radians(self.angle))))
-        self.current_time += time_interval
+        self.current_time += self.time_interval
         arrow: str = self.get_arrow_direction(direction)
 
         ret =  (y, x, direction, arrow)
@@ -46,6 +48,15 @@ class ArrowTrajectory:
         index = round(normalized_angle / 45) % 8
         return self.arrows[index]
     
+    
+    def calculate_all_steps(self, playfield_size_original):
+        self.all_steps = []
+        while True:
+            step = self.calculate_step()
+            if step[0] > playfield_size_original[0] or step[0] < 0 or step[1] > playfield_size_original[1] or step[1] < 0:
+                return
+            self.all_steps.append(step)
+
     
     
 """

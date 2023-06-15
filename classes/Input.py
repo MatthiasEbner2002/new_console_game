@@ -22,6 +22,8 @@ class Input:
         self.power = 0
         self.max_power = max_power
         
+        self.cheats:bool = False
+        
         # listener is a thread, so it will run in the background
         listener = keyboard.Listener(on_press=self.keyDown, on_release=self.keyUp)
         listener.start()
@@ -69,6 +71,9 @@ class Input:
                 self.level.stop_game_and_exit()
             case Key.space:
                 self.level.next_step_for_game()
+                
+            case keyboard.KeyCode(char='c'):
+                self.cheats = not self.cheats
         
         self.angle %= 360
         
