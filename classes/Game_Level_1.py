@@ -26,7 +26,7 @@ class Game_Level_1:
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.score = 0                                          # Score, the Points
         self.arrow_radius = 0.25                                # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
-        self.cheat_trajectory: ArrowTrajectory = None                            # ArrowTrajectory object, used to show the trajectory of the arrow when the cheats are enabled
+        self.cheat_trajectory: ArrowTrajectory = None           # ArrowTrajectory object, used to show the trajectory of the arrow when the cheats are enabled
     def run(self):
 
         
@@ -37,7 +37,9 @@ class Game_Level_1:
             
             if self.input.show_info: # Show info
                 self.show_info_in_own_loop()
-            
+                if self.run_game is False: # if info was interupted by quit
+                    break
+
             
             self.screen.clear()                                                                                                                 # Clear the screen
             
