@@ -1,7 +1,7 @@
 import logging, math, curses
 
 from classes.Size import Size
-from classes.Color_util import Color_util
+from classes.util.Color_util import Color_util
 from classes.Input import Input
 from classes.ArrowTrajectory import ArrowTrajectory
 

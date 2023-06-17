@@ -4,7 +4,7 @@ import atexit
 
 # My file import
 from classes.Game_Level_1 import Game_Level_1
-from classes.Color_util import Color_util
+from classes.util.Color_util import Color_util
 
 def add_logging():
     format1 = '%(asctime)s %(levelname)s [%(filename)s - %(funcName)s(): %(lineno)s]: %(message)s'
