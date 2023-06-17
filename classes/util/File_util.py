@@ -2,11 +2,18 @@ import json
 import os
 import logging
 
+from classes.util.Score_Position_Encoder import Score_PositionEncoder
+
 class File_util():
-    default_file_path = "save_data/score.json"
+    default_score_file_path = "save_data/score.json"
     
-    def __init__(self, file_path=default_file_path):
+    def __init__(self, file_path=default_score_file_path):
+        
         self.file_path = file_path
+        if self.file_path is None:
+            self.file_path = File_util.default_score_file_path
+            
+            
         if not self.file_exists():
             self.create_file_with_content(self.get_default_data())
         
@@ -83,7 +90,7 @@ class File_util():
         logging.info("Creating file: " + self.file_path)
         try:
             with open(self.file_path, "w") as f:
-                json.dump(data, f)
+                json.dump(data, f, cls=Score_PositionEncoder)
         except Exception as e:
             logging.error("Error creating file: " + self.file_path)
             logging.error(str(e))
@@ -113,6 +120,3 @@ class File_util():
             "highscore_top_10": [],
             "score_last_100": [],
         }
-
-f = File_util()
-print(f.data_raw)

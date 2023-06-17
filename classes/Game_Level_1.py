@@ -21,10 +21,9 @@ class Game_Level_1:
         self.trajectory: ArrowTrajectory = None                 # ArrowTrajectory object, handles arrow trajectory calculations
         self.run_game: bool = True                              # Boolean, used to stop the game loop
         self.playfield_size_original = (22.7, 100)              # (height, width), original size of the playfield, for scaling purposes and calculations
-        self.playfield_size = None
+        self.playfield_size = None                              # (height, width), size of the playfield, for scaling purposes and calculations
         self.game_step_for_game_loop: int = 0                   # Integer, used to keep track of the current game step in the game loop
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
-        self.score = 0                                          # Score, the Points
         self.arrow_radius = 0.25                                # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
         self.cheat_trajectory: ArrowTrajectory = None           # ArrowTrajectory object, used to show the trajectory of the arrow when the cheats are enabled
     def run(self):
@@ -49,7 +48,7 @@ class Game_Level_1:
             self.playfield_size = draw_playfield_borders(self.screen, self.size)                                                                # Draw the borders of the playfield
             add_arrow_start_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.start_location)                   # Draw the starting location of the arrow
             add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.targets)                              # Draw the target
-            add_top_stats_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.score, self.size)                   # Draw the score
+            add_top_stats_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, self.input.score, self.size)                   # Draw the score
                     
             match self.game_step_for_game_loop:
                                 
@@ -136,8 +135,8 @@ class Game_Level_1:
       
                 
     def move_target_to_new_random_location_and_increase_score(self, target):
-        self.score += 1
-        logging.info(f"New Score: {self.score}")
+        self.input.score += 1
+        logging.info(f"New Score: {self.input.score}")
         old_target = target
         (x_position, y_position), diameter = target
         while old_target[0][0] == x_position or old_target[0][1] == y_position:
