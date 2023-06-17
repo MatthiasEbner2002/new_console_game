@@ -40,22 +40,17 @@ def exit_handler():
 
 
 def main(screen):
-    curses.noecho()
-    curses.initscr()
-    curses.start_color()
-    curses.use_default_colors()
+    curses.noecho()                 # disable automatic echoing of keys to the screen
+    curses.initscr()                # initialize the library, return a window object representing the whole screen
     
-    # init 255 colors 
-    for i in range(0, 255):
-        curses.init_pair(i + 1, i, -1)
-    Color_util.init_colors()
-        
-    curses.curs_set(0)
+    Color_util.init_colors()        # init colors, color pairs, and set default colors
     
-    atexit.register(exit_handler)
+    curses.curs_set(0)              # set cursor state. 0: invisible, 1: normal, 2: very visible
     
-    add_logging()
-    log_start()
+    atexit.register(exit_handler)   # register exit handler
+    
+    add_logging()                   # add logging
+    log_start()                     # log start
     
     
     game_level_1: Game_Level_1 = Game_Level_1(screen)
