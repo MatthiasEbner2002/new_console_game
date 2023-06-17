@@ -228,6 +228,7 @@ class Game_Level_1:
         ret.append("")
         ret.append("Press 'arrow_right' to increase the power of the arrow")
         ret.append("Press 'arrow_left' to decrease the power of the arrow")
+        ret.append("")
         ret.append("press 'space' to shoot the arrow")
         ret.append("")
         ret.append("Press 'i' to show this info box")
@@ -235,6 +236,8 @@ class Game_Level_1:
         ret.append("Press 'q' to quit the game")
         ret.append("")
         ret.append("Press 'c' to activale cheats")
+        ret.append("")
+        ret.append("Press 's' to save score (no name or view at the moment)")
         
         
         return ret
