@@ -15,7 +15,6 @@ class Score_Manager:
         
         self.get_score_last_100_from_raw_data()
         self.get_highscore_top_10_from_raw_data()   
-        self.write_into_file()
         atexit.register(self.write_into_file)   # register exit handler   
         
     def get_highscore_top_10_from_raw_data(self):
@@ -67,10 +66,14 @@ class Score_Manager:
             self.highscore_top_10.append(score)
             return
         
-        index = 0
-        while (index < 10 and index < len(self.highscore_top_10)) and score.score <= self.highscore_top_10[index].score:
-            index += 1
-        self.highscore_top_10.insert(index, score)
+        if self.highscore_top_10[len(self.highscore_top_10) - 1].score >= score.score:
+            self.highscore_top_10.append(score)
+        else:  
+            for i in range(len(self.highscore_top_10)):
+                if score.score > self.highscore_top_10[i].score:
+                    self.highscore_top_10.insert(i, score)
+                    break
+                
 
-        if len(self.highscore_top_10) < 10:
+        if len(self.highscore_top_10) > 10:
             self.highscore_top_10 = self.highscore_top_10[:10]

@@ -90,7 +90,7 @@ class File_util():
         logging.info("Creating file: " + self.file_path)
         try:
             with open(self.file_path, "w") as f:
-                json.dump(data, f, cls=Score_PositionEncoder)
+                json.dump(data, f, cls=Score_PositionEncoder, indent=4)
         except Exception as e:
             logging.error("Error creating file: " + self.file_path)
             logging.error(str(e))
