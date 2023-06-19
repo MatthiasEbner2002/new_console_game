@@ -68,7 +68,7 @@ class Score_Manager:
             return
         
         index = 0
-        while index < 10 and score.score <= self.highscore_top_10[index].score:
+        while (index < 10 and index < len(self.highscore_top_10)) and score.score <= self.highscore_top_10[index].score:
             index += 1
         self.highscore_top_10.insert(index, score)
 

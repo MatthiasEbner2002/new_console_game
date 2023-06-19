@@ -7,6 +7,7 @@ from classes.Score_Position import Score_Position
 
 class Input:
     def __init__(self, level, max_power: int=25):
+        self.disable_input: bool = False    # disable input or not
         self.level = level
         self.score_manager: Score_Manager = Score_Manager()
         self.score: int = 0                 # Score, the Points
@@ -16,6 +17,7 @@ class Input:
         self.max_line_count: int = 0        # max lines that can be shown
         self.line_position: int  = 0        # actual position in the lines
         self.lines_count: int    = 0        # how many lines exist
+        self.get_name: bool      = False    # get name for highscore 
         
         self.angle: int = 0
         self.power: int = 0
@@ -35,6 +37,9 @@ class Input:
         Args:
             key : The key that was pressed.
         """
+        
+        if self.disable_input:
+            return
         
         match key:
             case Key.up:
@@ -77,7 +82,8 @@ class Input:
                 self.cheats = not self.cheats
         
             case keyboard.KeyCode(char='s'):
-                self.score_manager.add_score(Score_Position("Test", self.score))
+                # self.score_manager.add_score(Score_Position("Test", self.score))
+                self.get_name = True
         self.angle %= 360
         
                 
@@ -89,6 +95,8 @@ class Input:
         Args:
             key: The key that was released.
         """
+        if self.disable_input:
+            return
         
         match key:
             case Key.up:
@@ -111,3 +119,7 @@ class Input:
         
         if self.line_position + max_line_count > self.lines_count:
             self.line_position = max(0, self.lines_count - self.max_line_count)
+            
+            
+    def add_score(self, score_position: Score_Position):
+        self.score_manager.add_score(score_position)

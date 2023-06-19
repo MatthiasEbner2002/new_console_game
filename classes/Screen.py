@@ -321,8 +321,6 @@ def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, p
     cheat_string = "[C]heats"
     screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) + 1 + len(quit_string) + 1, cheat_string, cheat_color_oair)
     
-        
-    
     
 def add_info_for_level(screen: curses.window, size: Size, info_list: list, input: Input):
     x_start  = int(size.get_x_for_border() * 0.1) # Start 10% from the left

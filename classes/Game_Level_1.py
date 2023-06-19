@@ -1,10 +1,11 @@
-import time, logging, curses, random, numpy as np
+import  time, logging, curses, curses.textpad, random, numpy as np
 
 
 from classes.Screen import *
 from classes.Size import Size
 from classes.ArrowTrajectory import ArrowTrajectory
 from classes.Input import Input
+from classes.Score_Position import Score_Position
 
 
 
@@ -26,6 +27,7 @@ class Game_Level_1:
         self.targets = [((0, 10), (1, 1))]                      # List, used to keep track of the targets ((x, y), (diameter_x, diameter_y))
         self.arrow_radius = 0.25                                # Radius of the arrow, its a circle to make it easier to calculate the collision with the targets
         self.cheat_trajectory: ArrowTrajectory = None           # ArrowTrajectory object, used to show the trajectory of the arrow when the cheats are enabled
+    
     def run(self):
 
         
@@ -38,7 +40,9 @@ class Game_Level_1:
                 self.show_info_in_own_loop()
                 if self.run_game is False: # if info was interupted by quit
                     break
-
+            
+            if self.input.get_name: # Get name for highscore
+                self.add_score()
             
             self.screen.clear()                                                                                                                 # Clear the screen
             
@@ -217,6 +221,102 @@ class Game_Level_1:
             
         logging.info("exit the info Box for level.")
 
+     
+    def add_score(self):
+        """
+        This function is used to get the name of the player.
+        """
+        
+        title_position = 0
+        name_input_text_position = 2
+        name_input_position = 4
+        buttons_position = 6
+        
+        x_length: int = 8
+        y_length: int = 30
+            
+        x_start  = int((self.size.x / 2) - (x_length/2)) 
+        y_start  = int((self.size.y / 2) - (y_length/2))
+        
+        self.input.disable_input = True
+        curses.flushinp()                   # Flush all input buffers. so no input is in the buffer
+        again: bool = True
+        
+        while again:
+            curses.curs_set(1)              # set cursor state. 0: invisible, 1: normal, 2: very visible
+            
+        
+            self.screen.clear()                                  # Clear the screen
+            self.size.update_terminal_size_with_screen_refresh() # Update the size object with the new terminal size
+            
+
+
+            draw_full_lined_border(
+                self.screen, 
+                x_start - 1, 
+                y_start - 1, 
+                x_length + 1, 
+                y_length + 1
+            )
+            
+            # Add title at the middle of window
+            title: str = "New Score"
+            num_spaces: int = int((y_length - len(title)) / 2)
+            title = " " * num_spaces + title
+            self.screen.addstr(x_start + title_position, y_start, title)
+            
+            self.screen.addstr(x_start + name_input_text_position, y_start, "Enter your name: ")
+        
+            self.screen.refresh()
+            
+                
+            # Create a textpad rectangle for input
+            input_win = curses.newwin(1, y_length, x_start + name_input_position, y_start)
+            #input_win = curses.newwin(1, x_length, 0, 0)
+            input_box = curses.textpad.Textbox(input_win)
+            
+            
+            self.screen.keypad(True)        # Enable keypad mode for handling special keys
+
+            self.screen.refresh()
+
+            user_input = input_box.edit()   # Accept input and display it
+            
+            if len(user_input) == 0:        # input cant be empty
+                continue
+            
+            curses.curs_set(0)              # set cursor state. 0: invisible, 1: normal, 2: very visible
+            
+            
+            # add button at the middle of the window
+            buttons: str = "[a]gain save[Enter]"
+            num_spaces: int = int((y_length - len(buttons)) / 2)
+            buttons = " " * num_spaces + buttons
+            self.screen.addstr(x_start + buttons_position, y_start, buttons)
+            
+            
+            esc_button:str = "[x]"
+            self.screen.addstr(x_start, y_start + y_length - len(esc_button), esc_button)
+
+
+            # get the key pressed, if its 'a' then start again, if its 'x' then exit, if its 'Enter' then save
+            while True:
+                key = self.screen.getch()
+                
+                if key == curses.KEY_ENTER or key in [10, 13]:
+                    again = False
+                    self.input.add_score(score_position=Score_Position( user_input, self.input.score))
+                    break
+                elif key == ord('a'):
+                    break
+                elif key == ord('x'):
+                    again = False
+                    break
+                    
+        self.input.get_name = False
+        self.input.disable_input = False
+            
+        logging.info("exit the get name Box for level.") 
       
     def get_infos(self):
         ret = []
@@ -237,8 +337,7 @@ class Game_Level_1:
         ret.append("")
         ret.append("Press 'c' to activale cheats")
         ret.append("")
-        ret.append("Press 's' to save score (no name or view at the moment)")
-        
+        ret.append("Press 's' to save score (no view at the moment)")
         
         return ret
 
