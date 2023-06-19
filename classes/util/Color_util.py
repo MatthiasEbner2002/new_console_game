@@ -12,9 +12,9 @@ class Color_util:
     color_green: int        = 41
     color_light_blue: int   = 160
     color_red: int          = 161
-    color_turquoise: int    = 130
+    color_turquoise: int    = 50
     color_pink: int         = 200
-    color_dark_pink: int    = 50
+    color_dark_pink: int    = 130
         
     @classmethod
     def init_colors(cls):
@@ -37,5 +37,8 @@ class Color_util:
         #  init 255 colors 
         for i in range(0, 255):
             curses.init_pair(i + 1, i, cls.color_default_background)
+                
+    def get_color_pair_with_number(number: int) -> int:
+        return curses.color_pair(number)
         
     

@@ -456,3 +456,30 @@ def add_cheats_to_playfield(screen: curses.window, size: Size, playfield, playfi
         return
     for step in trajectory.all_steps:
         add_arrow_to_playfield(screen, playfield_size_original, playfield, step)
+
+
+def draw_full_lined_border_with_message(screen: curses.window, x_start: int, y_start, x_length: int, y_length, message: str, color_for_message: int=0):
+    """Draws a border around the screen and adds a message in the middle
+
+    Args:
+        screen (curses.window): the screen to draw on
+        x_start (int): the x start position of the border
+        y_start (int): the y start position of the border
+        x_length (int): the x length of the border
+        y_length (int): the y length of the border
+        message (str): the message to display in the middle
+    """
+    draw_full_lined_border(screen, x_start, y_start, x_length, y_length)
+    
+    if message is None or len(message) == 0:
+        # No message to display, return early
+        return
+    
+    color_for_message = Color_util.get_color_pair_with_number(color_for_message)                        # Get the color pair for the message
+    
+    if len(message) > y_length:
+        # Message is too long to display, cut it
+        logging.warning("Message is too long to display")
+        message = message[:y_length]
+        
+    screen.addstr(x_start, y_start + y_length // 2 - len(message) // 2, message, color_for_message)

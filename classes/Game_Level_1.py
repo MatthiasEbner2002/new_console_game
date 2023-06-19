@@ -227,12 +227,11 @@ class Game_Level_1:
         This function is used to get the name of the player.
         """
         
-        title_position = 0
-        name_input_text_position = 2
-        name_input_position = 4
-        buttons_position = 6
+        name_input_text_position = 1
+        name_input_position = 3
+        buttons_position = 5
         
-        x_length: int = 8
+        x_length: int = 7
         y_length: int = 30
             
         x_start  = int((self.size.x / 2) - (x_length/2)) 
@@ -251,19 +250,15 @@ class Game_Level_1:
             
 
 
-            draw_full_lined_border(
+            draw_full_lined_border_with_message(
                 self.screen, 
                 x_start - 1, 
                 y_start - 1, 
                 x_length + 1, 
-                y_length + 1
+                y_length + 1,
+                "New Score",
+                Color_util.color_turquoise
             )
-            
-            # Add title at the middle of window
-            title: str = "New Score"
-            num_spaces: int = int((y_length - len(title)) / 2)
-            title = " " * num_spaces + title
-            self.screen.addstr(x_start + title_position, y_start, title)
             
             self.screen.addstr(x_start + name_input_text_position, y_start, "Enter your name: ")
         
@@ -296,7 +291,7 @@ class Game_Level_1:
             
             
             esc_button:str = "[x]"
-            self.screen.addstr(x_start, y_start + y_length - len(esc_button), esc_button)
+            self.screen.addstr(x_start - 1, y_start + y_length - len(esc_button), esc_button, Color_util.get_color_pair_with_number(Color_util.color_red))
 
 
             # get the key pressed, if its 'a' then start again, if its 'x' then exit, if its 'Enter' then save
