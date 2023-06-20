@@ -40,7 +40,7 @@ class Size:
             new Size(): with x, y and screen set
         """
         rows, columns = screen.getmaxyx()
-        return cls(int(rows) - 1, int(columns) - 1, screen)
+        return cls(int(rows) - 2, int(columns) - 1, screen)
     
     def set_new_size(self, x, y):
         """ sets the new x and y values
@@ -94,7 +94,7 @@ class Size:
         
         rows, columns = self.screen.getmaxyx()
         
-        rows = int(rows) - 1
+        rows = int(rows) - 2
         columns = int(columns) - 1
         self.set_new_size(rows, columns)
         
@@ -173,6 +173,9 @@ class Size:
             playfield_y_start = self.y_start
             
         return playfield_x_start, playfield_y_start, playfield_x, playfield_y
+    
+    def is_playfield_x_smaller_then_x_verhältnis(self):
+        return self.get_x() / (self.get_x() + self.get_y()) <= self.x_verhältnis
     
     
     def get_x_for_border(self):

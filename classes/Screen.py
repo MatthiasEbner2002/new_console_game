@@ -19,29 +19,38 @@ def draw_borders(screen: curses.window, size: Size):
         screen (): screen (curses)
         size (Size): Size of the screen
     """
-    
-    y = size.get_y_for_border()
-    x = size.get_x_for_border()
     if screen is None:
         logging.warning("Screen is not set")
         return
 
+    # Get the size of the terminal
+    height, width = screen.getmaxyx()
+
+    # Create a window with a border
+    y = size.get_y_for_border()
+    x = size.get_x_for_border()
+
+    box1 = screen.subwin(height, width, 0, 0)
+    box1.box()
+    
+    
+
     # Draw horizontal lines
     for i in range(y):
-        screen.addch(0, i, curses.ACS_HLINE)  # Top border line
-        screen.addch(x, i, curses.ACS_HLINE)  # Bottom border line
+        #screen.addch(0, i, curses.ACS_HLINE)  # Top border line
+        #screen.addch(x, i, curses.ACS_HLINE)  # Bottom border line
         screen.addch(x - size.menu_x_size, i, curses.ACS_HLINE)  # Menu line
 
     # Draw vertical lines
-    for i in range(x):
-        screen.addch(i, 0, curses.ACS_VLINE)  # Left border line
-        screen.addch(i, y, curses.ACS_VLINE)  # Right border line
+    #for i in range(x):
+    #    screen.addch(i, 0, curses.ACS_VLINE)  # Left border line
+    #    screen.addch(i, y, curses.ACS_VLINE)  # Right border line
 
     # Draw corner characters
-    screen.addch(0, 0, curses.ACS_ULCORNER)  # Upper left corner
-    screen.addch(0, y, curses.ACS_URCORNER)  # Upper right corner
-    screen.addch(x, 0, curses.ACS_LLCORNER)  # Lower left corner
-    screen.addch(x - 1, y, curses.ACS_LRCORNER)  # Lower right corner
+    #screen.addch(0, 0, curses.ACS_ULCORNER)  # Upper left corner
+    #screen.addch(0, y, curses.ACS_URCORNER)  # Upper right corner
+    #screen.addch(x, 0, curses.ACS_LLCORNER)  # Lower left corner
+    #screen.addch(x - 1, y, curses.ACS_LRCORNER)  # Lower right corner
     screen.addch(x - size.menu_x_size, 0, curses.ACS_LTEE)  # Menu line left corner
     screen.addch(x - size.menu_x_size, y, curses.ACS_RTEE)  # Menu line right corner
 
@@ -81,17 +90,23 @@ def draw_playfield_borders(screen: curses.window, size:Size):
     border_color_pair = Color_util.PLAYFIELD_BORDER_COLOR
     
     for i in range(x_start, x_start + x):
-        screen.addch(i, y_start, curses.ACS_VLINE | curses.A_BOLD, border_color_pair)  # Left border line
-        screen.addch(i, y_start + y, curses.ACS_VLINE | curses.A_BOLD, border_color_pair)  # Right border line
+        screen.addch(i, y_start, '┃', border_color_pair)       # Left border line
+        screen.addch(i, y_start + y, '┃', border_color_pair)   # Right border line
         
     for i in range(y_start, y_start +  y):
-        screen.addch(x_start, i, curses.ACS_HLINE | curses.A_BOLD, border_color_pair)  # Top border line
-        screen.addch(x_start + x, i, curses.ACS_HLINE | curses.A_BOLD, border_color_pair)  # Bottom border line
-        
-    screen.addch(x_start, y_start, curses.ACS_ULCORNER | curses.A_BOLD, border_color_pair)  # Upper left corner
-    screen.addch(x_start, y_start + y, curses.ACS_URCORNER | curses.A_BOLD, border_color_pair)  # Upper right corner
-    screen.addch(x_start + x, y_start, curses.ACS_LLCORNER | curses.A_BOLD, border_color_pair)  # Lower left corner
-    screen.addch(x_start + x, y_start + y, curses.ACS_LRCORNER | curses.A_BOLD, border_color_pair)  # Lower right corner
+        screen.addch(x_start, i, '━', border_color_pair)       # Top border line
+        screen.addch(x_start + x, i,'━', border_color_pair)   # Bottom border line
+    
+    if size.is_playfield_x_smaller_then_x_verhältnis():
+        screen.addch(x_start, y_start, '┏', border_color_pair)          # Upper left corner
+        screen.addch(x_start, y_start + y, '┓', border_color_pair)      # Upper right corner
+        screen.addch(x_start + x, y_start, '┺', border_color_pair)      # Lower left corner
+        screen.addch(x_start + x, y_start + y, '┹', border_color_pair)  # Lower right corner
+    else:
+        screen.addch(x_start, y_start, '┢', border_color_pair)          # Upper left corner
+        screen.addch(x_start, y_start + y, "┪", border_color_pair)      # Upper right corner
+        screen.addch(x_start + x, y_start, '┡', border_color_pair)      # Lower left corner
+        screen.addch(x_start + x, y_start + y, '┩',  border_color_pair)  # Lower right corner
     
     return  x_start, y_start, x, y  # Return the playfield borders for further use
 
@@ -469,7 +484,9 @@ def draw_full_lined_border_with_message(screen: curses.window, x_start: int, y_s
         y_length (int): the y length of the border
         message (str): the message to display in the middle
     """
-    draw_full_lined_border(screen, x_start, y_start, x_length, y_length)
+    draw_full_lined_border(screen, x_start, y_start, x_length, y_length)#
+    #box1 = screen.subwin(x_length, y_length, x_start, y_start)
+    #box1.box()
     
     if message is None or len(message) == 0:
         # No message to display, return early
