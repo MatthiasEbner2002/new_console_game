@@ -5,7 +5,7 @@ from classes.Screen import *
 from classes.Size import Size
 from classes.ArrowTrajectory import ArrowTrajectory
 from classes.Input import Input
-from classes.Score_Position import Score_Position
+from classes.Score_Position import ScorePosition
 
 
 
@@ -300,7 +300,7 @@ class Game_Level_1:
                 
                 if key == curses.KEY_ENTER or key in [10, 13]:
                     again = False
-                    self.input.add_score(score_position=Score_Position( user_input, self.input.score))
+                    self.input.add_score(score_position=ScorePosition( user_input, self.input.score))
                     break
                 elif key == ord('a'):
                     break

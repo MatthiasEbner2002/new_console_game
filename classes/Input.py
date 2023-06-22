@@ -2,7 +2,7 @@ from pynput import keyboard
 from pynput.keyboard import Key
 
 from classes.Score_Manager import Score_Manager
-from classes.Score_Position import Score_Position
+from classes.Score_Position import ScorePosition
 
 class Input:
     """
@@ -113,5 +113,5 @@ class Input:
         if self.line_position + max_line_count > self.lines_count:
             self.line_position = max(0, self.lines_count - self.max_line_count)
 
-    def add_score(self, score_position: Score_Position):
+    def add_score(self, score_position: ScorePosition):
         self.score_manager.add_score(score_position)

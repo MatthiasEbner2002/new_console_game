@@ -1,14 +1,31 @@
+"""
+Module: Score_Position_Encoder
+Custom JSON encoder for ScorePosition objects.
+"""
+
 import json
-from classes.Score_Position import Score_Position
+from classes.Score_Position import ScorePosition
 
 
-class Score_PositionEncoder(json.JSONEncoder):
+class Score_Position_Encoder(json.JSONEncoder):
+    """
+    Custom JSON encoder for ScorePosition objects.
+    """
+
     def default(self, obj):
-        if isinstance(obj, Score_Position):
-            # Convert Score_Position object to a dictionary
+        """
+        Convert ScorePosition object to a dictionary for JSON serialization.
+
+        Args:
+            obj (ScorePosition): The ScorePosition object to encode.
+
+        Returns:
+            dict: The dictionary representation of the ScorePosition object.
+        """
+        if isinstance(obj, ScorePosition):
             return {
                 "name": obj.name,
                 "score": obj.score,
-                "date_time": obj.date_time.strftime(Score_Position.formatted_datetime)
+                "date_time": obj.date_time.strftime(ScorePosition.formatted_datetime)
             }
         return super().default(obj)

@@ -2,7 +2,7 @@ import json
 import os
 import logging
 
-from classes.util.Score_Position_Encoder import Score_PositionEncoder
+from classes.util.Score_Position_Encoder import Score_Position_Encoder
 
 class File_util():
     default_score_file_path = "save_data/score.json"
@@ -90,7 +90,7 @@ class File_util():
         logging.info("Creating file: " + self.file_path)
         try:
             with open(self.file_path, "w") as f:
-                json.dump(data, f, cls=Score_PositionEncoder, indent=4)
+                json.dump(data, f, cls=Score_Position_Encoder, indent=4)
         except Exception as e:
             logging.error("Error creating file: " + self.file_path)
             logging.error(str(e))

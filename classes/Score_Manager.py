@@ -1,6 +1,6 @@
 import logging, json, atexit
 from classes.util.File_util import File_util
-from classes.Score_Position import Score_Position
+from classes.Score_Position import ScorePosition
 
 class Score_Manager:
     
@@ -26,7 +26,7 @@ class Score_Manager:
         raw_data = self.file_util.data_raw
         raw_highscore_top_10 = raw_data['highscore_top_10']
         for raw_score_position in raw_highscore_top_10:
-            self.highscore_top_10.append(Score_Position(raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
+            self.highscore_top_10.append(ScorePosition(raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
 
     def get_score_last_100_from_raw_data(self):
         """
@@ -37,7 +37,7 @@ class Score_Manager:
         raw_data = self.file_util.data_raw
         raw_score_last_100 = raw_data['score_last_100']
         for raw_score_position in raw_score_last_100:
-            self.score_last_100.append(Score_Position(raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
+            self.score_last_100.append(ScorePosition(raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
             
     def write_into_file(self):
         """
@@ -50,18 +50,18 @@ class Score_Manager:
         }
         self.file_util.create_file_with_content(json_data)
 
-    def add_score(self, score: Score_Position):
+    def add_score(self, score: ScorePosition):
         logging.info("Adding score: " + str(score.score))
         self.add_score_to_top_10(score)
         self.add_score_to_last_100(score)
         
 
-    def add_score_to_last_100(self, score: Score_Position):
+    def add_score_to_last_100(self, score: ScorePosition):
         self.score_last_100.insert(0, score)
         if len(self.score_last_100) > 100:
             self.score_last_100 = self.score_last_100[:100]
             
-    def add_score_to_top_10(self, score: Score_Position):
+    def add_score_to_top_10(self, score: ScorePosition):
         if len(self.highscore_top_10) == 0:
             self.highscore_top_10.append(score)
             return
