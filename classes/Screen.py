@@ -95,7 +95,7 @@ def draw_playfield_borders(screen: curses.window, size:Size):
         
     for i in range(y_start, y_start +  y):
         screen.addch(x_start, i, '━', border_color_pair)       # Top border line
-        screen.addch(x_start + x, i,'━', border_color_pair)   # Bottom border line
+        screen.addch(x_start + x, i,'━', border_color_pair)     # Bottom border line
     
     if size.is_playfield_x_smaller_then_x_verhältnis():
         screen.addch(x_start, y_start, '┏', border_color_pair)          # Upper left corner
@@ -106,7 +106,7 @@ def draw_playfield_borders(screen: curses.window, size:Size):
         screen.addch(x_start, y_start, '┢', border_color_pair)          # Upper left corner
         screen.addch(x_start, y_start + y, "┪", border_color_pair)      # Upper right corner
         screen.addch(x_start + x, y_start, '┡', border_color_pair)      # Lower left corner
-        screen.addch(x_start + x, y_start + y, '┩',  border_color_pair)  # Lower right corner
+        screen.addch(x_start + x, y_start + y, '┩',  border_color_pair) # Lower right corner
     
     return  x_start, y_start, x, y  # Return the playfield borders for further use
 
