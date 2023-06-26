@@ -15,7 +15,7 @@ class Score_Manager:
         
         self.get_score_last_100_from_raw_data()
         self.get_highscore_top_10_from_raw_data()   
-        atexit.register(self.write_into_file)   # register exit handler   
+        atexit.register(self.exit_handler_score_manager)   # register exit handler   
         
     def get_highscore_top_10_from_raw_data(self):
         """
@@ -77,3 +77,9 @@ class Score_Manager:
 
         if len(self.highscore_top_10) > 10:
             self.highscore_top_10 = self.highscore_top_10[:10]
+            
+            
+    def exit_handler_score_manager(self):
+        # TODO: check if changes were made and dont save if no changes were made
+        logging.info("Exiting: Saving highscore top 10 and score last 100")
+        self.write_into_file()
