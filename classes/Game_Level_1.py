@@ -363,9 +363,9 @@ def line_intersects_square(x1, y1, x2, y2, target, radius_arrow):
     # Check if the line intersects any of the square's sides
     """
     if line_intersects_side(x1, y1, x2, y2, square_x, square_y, square_x + square_width, square_y) or \
-            line_intersects_side(x1, y1, x2, y2, square_x + square_width, square_y, 
+            line_intersects_side(x1, y1, x2, y2, square_x + square_width, square_y,
             square_x + square_width, square_y + square_height) or \
-            line_intersects_side(x1, y1, x2, y2, square_x + square_width, 
+            line_intersects_side(x1, y1, x2, y2, square_x + square_width,
             square_y + square_height, square_x, square_y + square_height) or \
             line_intersects_side(x1, y1, x2, y2, square_x, square_y + square_height, square_x, square_y):
         logging.debug("Line intersects side")

@@ -421,7 +421,8 @@ def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_
 
 
 def split_long_string(string, max_length: int):
-    """splits a string into substring with a max_len
+    """
+    splits a string into substring with a max_len
 
     Args:
         string (str): the string to split
@@ -478,7 +479,8 @@ def add_cheats_to_playfield(screen: curses.window, size: Size, playfield, playfi
 
 
 def draw_full_lined_border_with_message(screen: curses.window, x_start: int, y_start, x_length: int, y_length, message: str, color_for_message: int = 0):
-    """Draws a border around the screen and adds a message in the middle
+    """
+    Draws a border around the screen and adds a message in the middle
 
     Args:
         screen (curses.window): the screen to draw on
