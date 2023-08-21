@@ -4,6 +4,7 @@ from pynput.keyboard import Key
 from classes.Score_Manager import Score_Manager
 from classes.Score_Position import ScorePosition
 
+
 class Input:
     """
     Class for handling input from the user.

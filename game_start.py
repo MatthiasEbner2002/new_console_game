@@ -34,11 +34,11 @@ def log_start():
     =====================================
               G A M E   S T A R T
     =====================================
-    
+
               Welcome to Your Game!
-    
+
      Get ready for an exciting adventure!
-    
+
     =====================================
     ''')
 

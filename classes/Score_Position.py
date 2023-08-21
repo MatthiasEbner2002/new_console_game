@@ -15,7 +15,8 @@ class ScorePosition:
         Args:
             name (str): The name associated with the score.
             score (int): The score value.
-            date_time (str, optional): The date/time string in the format "%Y-%m-%d %H:%M:%S". Defaults to current date/time.
+            date_time (str, optional): The date/time string in the format "%Y-%m-%d %H:%M:%S".
+                Defaults to current date/time.
         """
         if date_time is None:
             self.date_time = datetime.datetime.now()
