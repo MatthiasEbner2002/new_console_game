@@ -17,7 +17,8 @@ class Score_Manager:
 
         self.get_score_last_100_from_raw_data()
         self.get_highscore_top_10_from_raw_data()
-        atexit.register(self.exit_handler_score_manager)   # register exit handler
+        # register exit handler
+        atexit.register(self.exit_handler_score_manager)
 
     def get_highscore_top_10_from_raw_data(self):
         """
@@ -47,7 +48,8 @@ class Score_Manager:
         """
         Write data into file
         """
-        logging.info("Writing data into file: Saving highscore top 10 and score last 100")
+        logging.info(
+            "Writing data into file: Saving highscore top 10 and score last 100")
         json_data = {
             "highscore_top_10": self.highscore_top_10,
             "score_last_100": self.score_last_100

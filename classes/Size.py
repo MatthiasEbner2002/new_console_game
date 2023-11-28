@@ -87,7 +87,7 @@ class Size:
         If smaller then 1 sets it to 1.
         If screen is not set and still None, logs warning.
         """
-        if self.screen == None:
+        if self.screen is None:
             logging.warn("Cannot update, because screen is not set")
             return
 
@@ -150,7 +150,8 @@ class Size:
     def calculate_playfield(self):
         """
         calculates the playfield size, based on the console size and the x and y verhältnis.
-        if the x verhältnis is bigger then the y verhältnis, the playfield_y is the max_y and the playfield_x is calculated from the y verhältnis.
+        if the x verhältnis is bigger then the y verhältnis, the playfield_y is the max_y and
+        the playfield_x is calculated from the y verhältnis.
 
         Returns:
             tuple: playfield_x, playfield_y

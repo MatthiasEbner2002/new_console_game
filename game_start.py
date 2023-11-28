@@ -56,11 +56,13 @@ def main(screen):
     Main function to run the game.
     """
     curses.noecho()  # disable automatic echoing of keys to the screen
-    curses.initscr()  # initialize the library, return a window object representing the whole screen
+    # initialize the library, return a window object representing the whole screen
+    curses.initscr()
 
     Color_util.init_colors()  # init colors, color pairs, and set default colors
 
-    curses.curs_set(0)  # set cursor state. 0: invisible, 1: normal, 2: very visible
+    # set cursor state. 0: invisible, 1: normal, 2: very visible
+    curses.curs_set(0)
 
     atexit.register(exit_handler)  # register exit handler
 

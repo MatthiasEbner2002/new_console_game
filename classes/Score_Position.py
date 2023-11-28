@@ -21,7 +21,8 @@ class ScorePosition:
         if date_time is None:
             self.date_time = datetime.datetime.now()
         else:
-            self.date_time = datetime.datetime.strptime(date_time, ScorePosition.formatted_datetime)
+            self.date_time = datetime.datetime.strptime(
+                date_time, ScorePosition.formatted_datetime)
 
         self.name = name
         self.score = score

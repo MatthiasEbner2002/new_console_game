@@ -52,8 +52,10 @@ def draw_borders(screen: curses.window, size: Size):
     # screen.addch(0, y, curses.ACS_URCORNER)  # Upper right corner
     # screen.addch(x, 0, curses.ACS_LLCORNER)  # Lower left corner
     # screen.addch(x - 1, y, curses.ACS_LRCORNER)  # Lower right corner
-    screen.addch(x - size.menu_x_size, 0, curses.ACS_LTEE)  # Menu line left corner
-    screen.addch(x - size.menu_x_size, y, curses.ACS_RTEE)  # Menu line right corner
+    # Menu line left corner
+    screen.addch(x - size.menu_x_size, 0, curses.ACS_LTEE)
+    # Menu line right corner
+    screen.addch(x - size.menu_x_size, y, curses.ACS_RTEE)
 
 
 def add_user_platform(screen: curses.window, size: Size):
@@ -91,35 +93,49 @@ def draw_playfield_borders(screen: curses.window, size: Size):
     border_color_pair = Color_util.PLAYFIELD_BORDER_COLOR
 
     for i in range(x_start, x_start + x):
-        screen.addch(i, y_start, '┃', border_color_pair)       # Left border line
-        screen.addch(i, y_start + y, '┃', border_color_pair)   # Right border line
+        # Left border line
+        screen.addch(i, y_start, '┃', border_color_pair)
+        # Right border line
+        screen.addch(i, y_start + y, '┃', border_color_pair)
 
     for i in range(y_start, y_start + y):
-        screen.addch(x_start, i, '━', border_color_pair)       # Top border line
-        screen.addch(x_start + x, i, '━', border_color_pair)     # Bottom border line
+        # Top border line
+        screen.addch(x_start, i, '━', border_color_pair)
+        # Bottom border line
+        screen.addch(x_start + x, i, '━', border_color_pair)
 
     if size.is_playfield_x_smaller_then_x_verhältnis():
-        screen.addch(x_start, y_start, '┏', border_color_pair)          # Upper left corner
-        screen.addch(x_start, y_start + y, '┓', border_color_pair)      # Upper right corner
-        screen.addch(x_start + x, y_start, '┺', border_color_pair)      # Lower left corner
-        screen.addch(x_start + x, y_start + y, '┹', border_color_pair)  # Lower right corner
+        # Upper left corner
+        screen.addch(x_start, y_start, '┏', border_color_pair)
+        # Upper right corner
+        screen.addch(x_start, y_start + y, '┓', border_color_pair)
+        screen.addch(x_start + x, y_start, '┺',
+                     border_color_pair)      # Lower left corner
+        screen.addch(x_start + x, y_start + y, '┹',
+                     border_color_pair)  # Lower right corner
     else:
-        screen.addch(x_start, y_start, '┢', border_color_pair)          # Upper left corner
-        screen.addch(x_start, y_start + y, "┪", border_color_pair)      # Upper right corner
-        screen.addch(x_start + x, y_start, '┡', border_color_pair)      # Lower left corner
-        screen.addch(x_start + x, y_start + y, '┩',  border_color_pair)  # Lower right corner
+        # Upper left corner
+        screen.addch(x_start, y_start, '┢', border_color_pair)
+        # Upper right corner
+        screen.addch(x_start, y_start + y, "┪", border_color_pair)
+        screen.addch(x_start + x, y_start, '┡',
+                     border_color_pair)      # Lower left corner
+        screen.addch(x_start + x, y_start + y, '┩',
+                     border_color_pair)  # Lower right corner
 
     return x_start, y_start, x, y  # Return the playfield borders for further use
 
 
 def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playfield, step):
     """
-    Adds the arrow to the playfield. The arrow is the current step of the user. The arrow is a char and has a color. 
+    Adds the arrow to the playfield. The arrow is the current step of the user. The arrow is a char and has a color.
 
     Args:
         screen (curses.window): The screen to draw on
-        playfield_size_original (_type_): The playfield in its orginal size, the size where its getting calculated from 
-        playfield (_type_): the playfield, where the arrow is getting drawn on, the playfield_size_original is getting drawn in this field on the screen 
+        playfield_size_original (_type_): The playfield in its orginal size,
+            the size where its getting calculated from
+        playfield (_type_): the playfield, where the arrow is getting drawn on,
+            the playfield_size_original is getting drawn in this field on the screen
         step (_type_): The current step of the user, the arrow is getting drawn on this position
     """
 
@@ -130,12 +146,14 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
     x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(
         playfield_size_original, playfield, arrow_position)  # Get the screen position of the arrow
 
-    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, step[3], arrow_color_pair)
+    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield,
+                 step[3], arrow_color_pair)
 
 
 def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
     """
-    Adds the angle to the playfield. The angle is a line, representing the angle of the arrow. Under the angle is the angle value.
+    Adds the angle to the playfield. The angle is a line, representing the angle of the arrow.
+    Under the angle is the angle value.
 
     Args:
         screen (curses.window): The screen to draw on
@@ -159,19 +177,23 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
     # Draw the line
     draw_line(screen, angle_y_middle, angle_x_middle, end_x, end_y,
               abs(angle - 360))  # Draw a line between the two points
-    screen.addch(angle_x_middle, angle_y_middle, 'o')  # Mark the middle point with 'O'
-    screen.addch(end_y, end_x, get_arrow_direction(abs(angle - 360)))  # Draw the line to the end point with 'X'
+    # Mark the middle point with 'O'
+    screen.addch(angle_x_middle, angle_y_middle, 'o')
+    # Draw the line to the end point with 'X'
+    screen.addch(end_y, end_x, get_arrow_direction(abs(angle - 360)))
 
     # Calculate the angle value
     angle_text = f"Angle: {abs(angle - 360)}°"
 
     # Write the angle text
-    screen.addstr(angle_x_middle + 4, 11, angle_text)  # Adjusted the position for clarity
+    # Adjusted the position for clarity
+    screen.addstr(angle_x_middle + 4, 11, angle_text)
 
 
 def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximum: int):
     """
-    Adds the power to the playfield. The power is a progress bar, representing the power of the arrow. At the left of the power is the power value.
+    Adds the power to the playfield. The power is a progress bar, representing the power of the arrow.
+    At the left of the power is the power value.
 
     Args:
         screen (curses.window): The screen to draw on
@@ -182,10 +204,11 @@ def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximu
 
     x = size.get_x_for_progress_bar()
     y = size.get_y_for_progress_bar()
-    progress = value * 100 // maximum
+    # progress = value * 100 // maximum
     filled_length = value * 20 // maximum
     empty_length = 20 - filled_length
-    screen.addstr(x, y, str(value) + (" ", "")[value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
+    screen.addstr(x, y, str(value) + (" ", "")
+                  [value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
 
 
 def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: int):
@@ -270,9 +293,11 @@ def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original,
     arrow_color_pair = Color_util.ARROW_START_COLOR
     # start_char = curses.ACS_BULLET | curses.A_BOLD
     start_char = 'o'
+    # Get the screen position of the arrow
     x_arrow_in_playfield, y_arrow_in_playfield = get_screen_position_from_playfield_position(
-        playfield_size_original, playfield, (start_position[1], start_position[0]))  # Get the screen position of the arrow
-    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield, start_char, arrow_color_pair)
+        playfield_size_original, playfield, (start_position[1], start_position[0]))
+    screen.addch(x_arrow_in_playfield, y_arrow_in_playfield,
+                 start_char, arrow_color_pair)
 
 
 def get_screen_position_from_playfield_position(playfield_size_original, playfield, position):
@@ -307,17 +332,22 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
             playfield_size_original, playfield_size, position)  # Get the screen position of the arrow
 
         # Get the size of the target in the playfield
-        x_target_size_in_playfield = round((diameter[0] / playfield_size_original[0]) * playfield_size[2])
+        x_target_size_in_playfield = round(
+            (diameter[0] / playfield_size_original[0]) * playfield_size[2])
         # Get the size of the target in the playfield
-        y_target_size_in_playfield = round((diameter[1] / playfield_size_original[1]) * playfield_size[3])
+        y_target_size_in_playfield = round(
+            (diameter[1] / playfield_size_original[1]) * playfield_size[3])
 
-        x_target_size_in_playfield = max(1, x_target_size_in_playfield)  # Make sure the target is at least 1 pixel big
-        y_target_size_in_playfield = max(1, y_target_size_in_playfield)  # Make sure the target is at least 1 pixel big
+        # Make sure the target is at least 1 pixel big
+        x_target_size_in_playfield = max(1, x_target_size_in_playfield)
+        # Make sure the target is at least 1 pixel big
+        y_target_size_in_playfield = max(1, y_target_size_in_playfield)
 
         # Print the square line by line
         for row in range(x_target_size_in_playfield):
             square_line = '#' * y_target_size_in_playfield
-            screen.addstr(x_target_in_playfield - row, y_target_in_playfield, square_line, target_color_pair)
+            screen.addstr(x_target_in_playfield - row,
+                          y_target_in_playfield, square_line, target_color_pair)
 
 
 def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size: Size):
@@ -333,10 +363,12 @@ def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, p
     screen.addstr(score_x, score_y, score_string, score_color_pair)
 
     info_string = "[I]nfo"
-    screen.addstr(score_x, score_y + len(score_string) + 1, info_string, info_color_pair)
+    screen.addstr(score_x, score_y + len(score_string) +
+                  1, info_string, info_color_pair)
 
     quit_string = "[Q]uit"
-    screen.addstr(score_x, score_y + len(score_string) + 1 + len(info_string) + 1, quit_string, quit_color_pair)
+    screen.addstr(score_x, score_y + len(score_string) + 1 +
+                  len(info_string) + 1, quit_string, quit_color_pair)
 
     cheat_string = "[C]heats"
     screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) +
@@ -357,7 +389,7 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
         y_length=y_length
     )
 
-    if info_list == None or len(info_list) == 0:
+    if info_list is None or len(info_list) == 0:
         logging.warning('No info for level given')
         info_list = ["No info for level found"]
 
@@ -385,10 +417,12 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
             y_start=y_start,
             y_length=y_length)
     for j in range(min(input.lines_count, input.max_line_count)):
-        screen.addstr(x_start + 1 + j, y_start + 1, new_info_strings[j + input.line_position])
+        screen.addstr(x_start + 1 + j, y_start + 1,
+                      new_info_strings[j + input.line_position])
 
 
-def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_start: int, x_length: int, y_length: int):
+def add_scoll_bar_for_info(screen: curses.window, input: Input,
+                           x_start: int, y_start: int, x_length: int, y_length: int):
     """
     Adds a scroll bar to the info box
 
@@ -402,12 +436,16 @@ def add_scoll_bar_for_info(screen: curses.window, input: Input, x_start: int, y_
         y_length (int): _description_
     """
 
-    screen.addch(x_start + 1, y_start + y_length - 1, '┬')              # top Border
-    screen.addch(x_start + x_length - 1, y_start + y_length - 1, '┴')   # bottom Border
+    screen.addch(x_start + 1, y_start + y_length -
+                 1, '┬')              # top Border
+    screen.addch(x_start + x_length - 1, y_start +
+                 y_length - 1, '┴')   # bottom Border
 
-    len_bar = max(1, round((input.max_line_count - 1) * ((input.max_line_count - 1) / input.lines_count)))
+    len_bar = max(1, round((input.max_line_count - 1) *
+                  ((input.max_line_count - 1) / input.lines_count)))
 
-    x_start_bar = round((input.max_line_count - 1) * (input.line_position / input.lines_count))
+    x_start_bar = round((input.max_line_count - 1) *
+                        (input.line_position / input.lines_count))
 
     if len_bar + x_start_bar >= input.max_line_count - 1:
         x_start_bar -= 1
@@ -447,21 +485,27 @@ def draw_full_lined_border(screen: curses.window, x_start: int, y_start: int, x_
     # Draw horizontal lines
     for i in range(y_start, y_start + y_length):
         screen.addch(x_start, i, curses.ACS_HLINE)  # Top border line
-        screen.addch(x_start + x_length, i, curses.ACS_HLINE)  # Bottom border line
+        # Bottom border line
+        screen.addch(x_start + x_length, i, curses.ACS_HLINE)
 
     # Draw vertical lines
     for i in range(x_start, x_start + x_length):
         screen.addch(i, y_start, curses.ACS_VLINE)  # Left border line
-        screen.addch(i, y_start + y_length, curses.ACS_VLINE)  # Right border line
+        # Right border line
+        screen.addch(i, y_start + y_length, curses.ACS_VLINE)
 
     # Draw corner characters
     screen.addch(x_start, y_start, curses.ACS_ULCORNER)  # Upper left corner
-    screen.addch(x_start, y_start + y_length, curses.ACS_URCORNER)  # Upper right corner
-    screen.addch(x_start + x_length, y_start, curses.ACS_LLCORNER)  # Lower left corner
-    screen.addch(x_start + x_length, y_start + y_length, curses.ACS_LRCORNER)  # Lower right corner
+    screen.addch(x_start, y_start + y_length,
+                 curses.ACS_URCORNER)  # Upper right corner
+    screen.addch(x_start + x_length, y_start,
+                 curses.ACS_LLCORNER)  # Lower left corner
+    screen.addch(x_start + x_length, y_start + y_length,
+                 curses.ACS_LRCORNER)  # Lower right corner
 
 
-def add_cheats_to_playfield(screen: curses.window, size: Size, playfield, playfield_size_original, trajectory: ArrowTrajectory):
+def add_cheats_to_playfield(screen: curses.window,
+                            size: Size, playfield, playfield_size_original, trajectory: ArrowTrajectory):
     """Adds the cheats to the playfield
 
     Args:
@@ -475,10 +519,13 @@ def add_cheats_to_playfield(screen: curses.window, size: Size, playfield, playfi
         logging.warning("Screen is not set")
         return
     for step in trajectory.all_steps:
-        add_arrow_to_playfield(screen, playfield_size_original, playfield, step)
+        add_arrow_to_playfield(
+            screen, playfield_size_original, playfield, step)
 
 
-def draw_full_lined_border_with_message(screen: curses.window, x_start: int, y_start, x_length: int, y_length, message: str, color_for_message: int = 0):
+def draw_full_lined_border_with_message(screen: curses.window,
+                                        x_start: int, y_start, x_length: int, y_length,
+                                        message: str, color_for_message: int = 0):
     """
     Draws a border around the screen and adds a message in the middle
 
@@ -506,4 +553,5 @@ def draw_full_lined_border_with_message(screen: curses.window, x_start: int, y_s
         logging.warning("Message is too long to display")
         message = message[:y_length]
 
-    screen.addstr(x_start, y_start + y_length // 2 - len(message) // 2, message, color_for_message)
+    screen.addstr(x_start, y_start + y_length // 2 -
+                  len(message) // 2, message, color_for_message)

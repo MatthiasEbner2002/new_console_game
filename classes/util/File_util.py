@@ -73,7 +73,7 @@ class File_util():
         Check if file exists, log warning if not
 
         Returns:
-            bool: True if file exists, False if not 
+            bool: True if file exists, False if not
         """
 
         if File_util._file_exists(self.file_path):

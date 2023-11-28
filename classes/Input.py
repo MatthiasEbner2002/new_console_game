@@ -29,7 +29,8 @@ class Input:
         self.max_power = max_power
 
         # listener is a thread, so it will run in the background
-        listener = keyboard.Listener(on_press=self.key_down, on_release=self.key_up)
+        listener = keyboard.Listener(
+            on_press=self.key_down, on_release=self.key_up)
         listener.start()
 
     def key_down(self, key):
