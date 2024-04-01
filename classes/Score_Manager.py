@@ -21,9 +21,7 @@ class Score_Manager:
         atexit.register(self.exit_handler_score_manager)
 
     def get_highscore_top_10_from_raw_data(self):
-        """
-        Get highscore top 10, from File_util.raw_data
-        """
+        """Get highscore top 10, from File_util.raw_data"""
 
         logging.info("Getting highscore top 10")
         raw_data = self.file_util.data_raw
@@ -33,9 +31,7 @@ class Score_Manager:
                 raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
 
     def get_score_last_100_from_raw_data(self):
-        """
-        Get score last 100, from File_util.raw_data
-        """
+        """Get score last 100, from File_util.raw_data"""
 
         logging.info("Getting score last 100")
         raw_data = self.file_util.data_raw
@@ -45,9 +41,7 @@ class Score_Manager:
                 raw_score_position['name'], raw_score_position['score'], raw_score_position['date_time']))
 
     def write_into_file(self):
-        """
-        Write data into file
-        """
+        """Write data into file"""
         logging.info(
             "Writing data into file: Saving highscore top 10 and score last 100")
         json_data = {

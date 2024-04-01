@@ -2,9 +2,7 @@ import datetime
 
 
 class ScorePosition:
-    """
-    Represents a score position with a name, score, and date/time.
-    """
+    """Represents a score position with a name, score, and date/time"""
 
     formatted_datetime = "%Y-%m-%d %H:%M:%S"
 

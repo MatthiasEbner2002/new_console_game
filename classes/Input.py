@@ -6,9 +6,7 @@ from classes.Score_Position import ScorePosition
 
 
 class Input:
-    """
-    Class for handling input from the user.
-    """
+    """Class for handling input from the user"""
 
     def __init__(self, level, max_power: int = 25):
         self.disable_input = False  # disable input or not

@@ -110,18 +110,13 @@ class Game_Level_1:
         logging.info("Arrow removed and input set to get new angle.")
 
     def stop_game_and_exit(self):
-        """
-        This function is used to stop the game loop and exit the game.
-        """
+        """This function is used to stop the game loop and exit the game"""
 
         self.run_game = False
         logging.info("Game stopped and should exit.")
 
     def stop_arrow_and_remove_arrow_and_safe_last_position(self):
-        """
-        This function is used to stop the arrow and remove it from Level and safe the new starting location.
-
-        """
+        """This function is used to stop the arrow and remove it from Level and safe the new starting location"""
 
         if self.trajectory is None or self.trajectory.actual_step is None:
             logging.error("trajectory does not exist or has not calculated any step")
@@ -164,25 +159,19 @@ class Game_Level_1:
         return ((x_position, y_position), diameter)
 
     def step_for_angle(self):
-        """
-        This code snippet is used to change the angle of the arrow.
-        """
+        """This code snippet is used to change the angle of the arrow."""
 
         add_angle_to_playfield(self.screen, self.size, self.input.angle)  # Draw the angle of the arrow
         self.screen.refresh()
 
     def step_for_power(self):
-        """
-        This code snippet is used to change the power of the arrow.
-        """
+        """This code snippet is used to change the power of the arrow."""
 
         add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
         self.screen.refresh()
 
     def step_for_trajectory(self):
-        """
-        This code snippet is used to calculate the trajectory of the arrow.
-        """
+        """This code snippet is used to calculate the trajectory of the arrow"""
 
         if self.trajectory is None:
             logging.error("Trajectory is None")
@@ -233,9 +222,7 @@ class Game_Level_1:
         logging.info("exit the info Box for level.")
 
     def add_score(self):
-        """
-        This function is used to get the name of the player.
-        """
+        """This function is used to get the name of the player"""
 
         name_input_text_position = 1
         name_input_position = 3
