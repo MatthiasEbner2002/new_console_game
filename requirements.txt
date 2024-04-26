@@ -1,3 +1,3 @@
-some pip installs needed for the project
-TODO: add them here 
-colors of the project may vary in different consoles
+matplotlib~=3.8.0
+numpy~=1.26.4
+pynput~=1.7.6
