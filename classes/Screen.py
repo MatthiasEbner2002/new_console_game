@@ -350,7 +350,7 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
                           y_target_in_playfield, square_line, target_color_pair)
 
 
-def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size: Size):
+def add_top_stats_to_playfield(screen: curses.window, score, size: Size):
     stats = [
         (f'Score: {score}', Color_util.SCORE_COLOR),
         ('[I]nfo', Color_util.INFO_STAT_COLOR),

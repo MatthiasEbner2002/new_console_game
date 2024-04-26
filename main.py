@@ -12,10 +12,8 @@ from classes.Game_Level_1 import Game_Level_1
 from classes.util.Color_util import Color_util
 
 
-def add_logging():
-    """
-    Configure logging settings.
-    """
+def configure_logging():
+    """Configure logging settings."""
     format1 = '%(asctime)s %(levelname)s [%(filename)s - %(funcName)s(): %(lineno)s]: %(message)s'
     # format2 = '%(asctime)s | %(name)s | %(levelname)s %(message)s'
 
@@ -26,10 +24,8 @@ def add_logging():
                         level=logging.DEBUG)
 
 
-def log_start():
-    """
-    Log the start of the game.
-    """
+def log_starting_text():
+    """Log the start of the game."""
     logging.info('''
     =====================================
               G A M E   S T A R T
@@ -44,17 +40,13 @@ def log_start():
 
 
 def exit_handler():
-    """
-    Exit handler for curses.
-    """
+    """Exit handler for curses."""
     curses.flushinp()
     logging.info('Exit program')
 
 
 def main(screen):
-    """
-    Main function to run the game.
-    """
+    """Main function to run the game."""
     curses.noecho()  # disable automatic echoing of keys to the screen
     # initialize the library, return a window object representing the whole screen
     curses.initscr()
@@ -66,8 +58,8 @@ def main(screen):
 
     atexit.register(exit_handler)  # register exit handler
 
-    add_logging()  # add logging
-    log_start()  # log start
+    configure_logging()  # add logging
+    log_starting_text()  # log start
 
     game_level_1: Game_Level_1 = Game_Level_1(screen)
     game_level_1.run()

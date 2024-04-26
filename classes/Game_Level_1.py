@@ -5,11 +5,7 @@ import curses.textpad
 import random
 import numpy as np
 
-
-from classes.Screen import (draw_borders, draw_playfield_borders, add_arrow_start_to_playfield, add_arrow_to_playfield,
-                            add_angle_to_playfield, add_power_to_playfield, add_cheats_to_playfield,
-                            add_targets_to_playfield, add_top_stats_to_playfield, add_info_for_level,
-                            draw_full_lined_border_with_message)
+import classes.Screen as sc
 from classes.Size import Size
 from classes.ArrowTrajectory import ArrowTrajectory
 from classes.Input import Input
@@ -61,23 +57,22 @@ class Game_Level_1:
             self.size.update_terminal_size_with_screen_refresh()
 
             # Draw the borders of the screen
-            draw_borders(self.screen, self.size)
+            sc.draw_borders(self.screen, self.size)
             # Draw the borders of the playfield
-            self.playfield_size = draw_playfield_borders(self.screen, self.size)
+            self.playfield_size = sc.draw_playfield_borders(self.screen, self.size)
             # Draw the starting location of the arrow
-            add_arrow_start_to_playfield(self.screen, self.playfield_size_original,
-                                         self.playfield_size, self.start_location)
-            add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size,
-                                     self.targets)                              # Draw the target
-            add_top_stats_to_playfield(self.screen, self.playfield_size_original, self.playfield_size,
-                                       self.input.score, self.size)                   # Draw the score
+            sc.add_arrow_start_to_playfield(self.screen, self.playfield_size_original,
+                                            self.playfield_size, self.start_location)
+            sc.add_targets_to_playfield(self.screen, self.playfield_size_original, self.playfield_size,
+                                        self.targets)                              # Draw the target
+            sc.add_top_stats_to_playfield(self.screen, self.input.score, self.size)  # Draw the score
 
             match self.game_step_for_game_loop:
 
                 case 0:  # Getting angle / power
 
-                    add_angle_to_playfield(self.screen, self.size, self.input.angle)
-                    add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
+                    sc.add_angle_to_playfield(self.screen, self.size, self.input.angle)
+                    sc.add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
 
                     if self.input.cheats:
                         if self.cheat_trajectory is None or self.cheat_trajectory.angle != self.input.angle or \
@@ -88,8 +83,8 @@ class Game_Level_1:
                             self.cheat_trajectory = ArrowTrajectory(
                                 self.start_location, self.input.power, self.input.angle, self.gravity)
                             self.cheat_trajectory.calculate_all_steps(self.playfield_size_original)
-                        add_cheats_to_playfield(self.screen, self.size, self.playfield_size,
-                                                self.playfield_size_original, self.cheat_trajectory)
+                        sc.add_cheats_to_playfield(self.screen, self.size, self.playfield_size,
+                                                   self.playfield_size_original, self.cheat_trajectory)
 
                     self.screen.refresh()
 
@@ -97,8 +92,8 @@ class Game_Level_1:
 
                 case 1:  # Trajectory calculation
                     self.cheat_trajectory = None
-                    add_angle_to_playfield(self.screen, self.size, self.input.angle)
-                    add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
+                    sc.add_angle_to_playfield(self.screen, self.size, self.input.angle)
+                    sc.add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
                     self.step_for_trajectory()
                     time.sleep(1 / 60)
 
@@ -161,13 +156,13 @@ class Game_Level_1:
     def step_for_angle(self):
         """This code snippet is used to change the angle of the arrow."""
 
-        add_angle_to_playfield(self.screen, self.size, self.input.angle)  # Draw the angle of the arrow
+        sc.add_angle_to_playfield(self.screen, self.size, self.input.angle)  # Draw the angle of the arrow
         self.screen.refresh()
 
     def step_for_power(self):
         """This code snippet is used to change the power of the arrow."""
 
-        add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
+        sc.add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
         self.screen.refresh()
 
     def step_for_trajectory(self):
@@ -205,7 +200,7 @@ class Game_Level_1:
                             self.targets[i] = self.move_target_to_new_random_location_and_increase_score(target)
                             break
 
-            add_arrow_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, step)
+            sc.add_arrow_to_playfield(self.screen, self.playfield_size_original, self.playfield_size, step)
             self.screen.refresh()
 
     def show_info_in_own_loop(self):
@@ -213,7 +208,7 @@ class Game_Level_1:
             self.screen.clear()                                  # Clear the screen
             self.size.update_terminal_size_with_screen_refresh()  # Update the size object with the new terminal size
 
-            add_info_for_level(self.screen, self.size, self.get_infos(), self.input)
+            sc.add_info_for_level(self.screen, self.size, self.get_infos(), self.input)
 
             self.screen.refresh()
 
@@ -244,7 +239,7 @@ class Game_Level_1:
             self.screen.clear()                                  # Clear the screen
             self.size.update_terminal_size_with_screen_refresh()  # Update the size object with the new terminal size
 
-            draw_full_lined_border_with_message(
+            sc.draw_full_lined_border_with_message(
                 self.screen,
                 x_start - 1,
                 y_start - 1,
