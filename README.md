@@ -1,5 +1,7 @@
 # Console Arrow Game
 
+**IMPORTANT**: requirement file only show the version that were used to create this.
+
 Welcome to the Console Arrow Game! This is a simple game where you control an arrow and try to hit targets within a square. You can adjust the angle and power of the arrow before firing it. The next arrow is fired from the last position of the previous arrow. The game is played using the spacebar to control various actions.
 
 ## Getting Started
@@ -15,17 +17,13 @@ To play the Console Arrow Game, you need a console or terminal environment on yo
 
 1. Clone or download the game repository from [GitHub](https://github.com/MatthiasEbner2002/new_console_game).
 
-
 2. Navigate to the game directory.
 
-
 3. Install the required dependencies. You can use `pip` to install the dependencies from the provided `requirements.txt` file.
-
 
 ## How to Play
 
 1. Run the game script.
-
 
 2. Adjust the angle of the arrow by pressing the spacebar. The arrow will rotate incrementally with each press.
 

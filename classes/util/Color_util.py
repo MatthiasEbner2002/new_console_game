@@ -29,6 +29,7 @@ class Color_util:
         cls.INFO_STAT_COLOR = curses.color_pair(cls.color_turquoise)
         cls.QUIT_STAT_COLOR = curses.color_pair(cls.color_red)
         cls.CHEAT_STAT_COLOR = curses.color_pair(cls.color_pink)
+        cls.SAVE_STAT_COLOR = curses.color_pair(cls.color_green)
 
     @classmethod
     def init_color_pairs(cls):

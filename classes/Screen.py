@@ -351,28 +351,21 @@ def add_targets_to_playfield(screen: curses.window, playfield_size_original, pla
 
 
 def add_top_stats_to_playfield(screen: curses.window, playfield_size_original, playfield, score, size: Size):
-    score_color_pair = Color_util.SCORE_COLOR
-    info_color_pair = Color_util.INFO_STAT_COLOR
-    quit_color_pair = Color_util.QUIT_STAT_COLOR
-    cheat_color_oair = Color_util.CHEAT_STAT_COLOR
-
-    score_string = f'Score: {score}'
+    stats = [
+        (f'Score: {score}', Color_util.SCORE_COLOR),
+        ('[I]nfo', Color_util.INFO_STAT_COLOR),
+        ('[Q]uit', Color_util.QUIT_STAT_COLOR),
+        ('[C]heats', Color_util.CHEAT_STAT_COLOR),
+        ('[S]ave', Color_util.SAVE_STAT_COLOR)
+    ]
 
     score_x = size.get_x_for_score()
     score_y = size.get_y_for_score()
-    screen.addstr(score_x, score_y, score_string, score_color_pair)
+    score_y_offset = 0
 
-    info_string = "[I]nfo"
-    screen.addstr(score_x, score_y + len(score_string) +
-                  1, info_string, info_color_pair)
-
-    quit_string = "[Q]uit"
-    screen.addstr(score_x, score_y + len(score_string) + 1 +
-                  len(info_string) + 1, quit_string, quit_color_pair)
-
-    cheat_string = "[C]heats"
-    screen.addstr(score_x, score_y + len(score_string) + 1 + len(quit_string) +
-                  1 + len(quit_string) + 1, cheat_string, cheat_color_oair)
+    for text, color_pair in stats:
+        screen.addstr(score_x, score_y + score_y_offset, text, color_pair)
+        score_y_offset += len(text) + 1
 
 
 def add_info_for_level(screen: curses.window, size: Size, info_list: list, input: Input):
