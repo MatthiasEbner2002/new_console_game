@@ -32,12 +32,7 @@ class Input:
         listener.start()
 
     def key_down(self, key):
-        """
-        This function is used to handle key presses.
-
-        Args:
-            key : The key that was pressed.
-        """
+        """This function is used to handle key presses."""
         if self.disable_input:
             return
 
@@ -86,12 +81,7 @@ class Input:
         self.angle %= 360
 
     def key_up(self, key):
-        """
-        This function is used to handle key releases.
-
-        Args:
-            key: The key that was released.
-        """
+        """This function is used to handle key releases."""
         if self.disable_input:
             return
 

@@ -1,3 +1,5 @@
+
+"""Methods to draw things on the screen. Interacts with the console and adds char and strings to the screen."""
 import logging
 import math
 import curses
@@ -6,11 +8,6 @@ from classes.Size import Size
 from classes.util.Color_util import Color_util
 from classes.Input import Input
 from classes.ArrowTrajectory import ArrowTrajectory
-
-"""
-Methods to draw borders and other things on the screen.
-interacts with the console and adds char and strings to the screen.
-"""
 
 
 def draw_borders(screen: curses.window, size: Size):
