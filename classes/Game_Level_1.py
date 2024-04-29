@@ -59,12 +59,13 @@ class Game_Level_1:
 
             # Draw the borders of the screen
             sc.draw_borders(self.screen, self.size)
-            # self.screen.refresh()
-            # time.sleep(1/60)
-            # continue
 
             # Draw the borders of the playfield
             self.playfield_size = sc.draw_playfield_borders(self.screen, self.size)
+
+            # self.screen.refresh()
+            # time.sleep(1/60)
+            # continue
             # Draw the starting location of the arrow
             sc.add_arrow_start_to_playfield(self.screen, self.playfield_size_original,
                                             self.playfield_size, self.start_location)
@@ -88,7 +89,7 @@ class Game_Level_1:
                             self.cheat_trajectory = ArrowTrajectory(
                                 self.start_location, self.input.power, self.input.angle, self.gravity)
                             self.cheat_trajectory.calculate_all_steps(self.playfield_size_original)
-                        sc.add_cheats_to_playfield(self.screen, self.size, self.playfield_size,
+                        sc.add_cheats_to_playfield(self.screen, self.playfield_size,
                                                    self.playfield_size_original, self.cheat_trajectory)
 
                     self.screen.refresh()

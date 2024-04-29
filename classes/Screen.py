@@ -37,31 +37,19 @@ def draw_borders(screen: curses.window, size: Size):
 
 
 def add_user_platform(screen: curses.window, size: Size):
-    """
-    Adds the user platform to the screen.
-
-    Args:
-        screen (_type_): _description_
-        size (Size): _description_
-    """
+    """Adds the user platform to the screen."""
 
     if screen is None:
         logging.warning("Screen is not set")
         return
 
     x = size.get_x()
-    y = size.get_y_start()
+    y = size.y_start
     screen.addstr(x, y, "######")
 
 
 def draw_playfield_borders(screen: curses.window, size: Size):
-    """
-    Draws the borders of the playfield.
-
-    Args:
-        screen (_type_): _description_
-        size (Size): _description_
-    """
+    """Draws the borders of the playfield."""
 
     if screen is None:
         logging.warning("Screen is not set")
@@ -129,15 +117,7 @@ def add_arrow_to_playfield(screen: curses.window, playfield_size_original, playf
 
 
 def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
-    """
-    Adds the angle to the playfield. The angle is a line, representing the angle of the arrow.
-    Under the angle is the angle value.
-
-    Args:
-        screen (curses.window): The screen to draw on
-        size (Size): the size of the screen and its positions of playfield and menu
-        angle (int): the angle of the arrow, the angle is getting drawn on this position
-    """
+    """Adds the angle to the playfield. The angle is a line. Under the angle is the angle value."""
 
     angle_x_middle = size.get_x_for_angle()
     angle_y_middle = size.get_y_for_angle()
@@ -153,7 +133,7 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
     end_y = int(angle_x_middle + math.sin(angle_in_radians) * radius_y)
 
     # Draw the line
-    draw_line(screen, angle_y_middle, angle_x_middle, end_x, end_y,
+    draw_line_for_angle(screen, angle_y_middle, angle_x_middle, end_x, end_y,
               abs(angle - 360))  # Draw a line between the two points
     # Mark the middle point with 'O'
     screen.addch(angle_x_middle, angle_y_middle, 'o')
@@ -169,70 +149,42 @@ def add_angle_to_playfield(screen: curses.window, size: Size, angle: int):
 
 
 def add_power_to_playfield(screen: curses.window, size: Size, value: int, maximum: int):
-    """
-    Adds the power to the playfield. The power is a progress bar, representing the power of the arrow.
-    At the left of the power is the power value.
-
-    Args:
-        screen (curses.window): The screen to draw on
-        size (Size): the size of the screen and its positions of playfield and menu
-        value (int): The current power of the arrow, the power is getting drawn on this position
-        maximum (int): The maximum power of the arrow.
-    """
+    """Adds the power to the playfield. The power is a progress bar, representing the power of the arrow."""
 
     x = size.get_x_for_progress_bar()
     y = size.get_y_for_progress_bar()
-    # progress = value * 100 // maximum
+
     filled_length = value * 20 // maximum
     empty_length = 20 - filled_length
     screen.addstr(x, y, str(value) + (" ", "")
                   [value >= 10] + "p [" + "=" * filled_length + " " * empty_length + "]")
 
 
-def draw_line(screen: curses.window, x1: int, y1: int, x2: int, y2: int, angle: int):
-    """
-    Bresenham's line algorithm. copyed from internet
-
-
-    Args:
-        screen (curses.window): The screen to draw on.
-        x1 (int): The x coordinate of the starting point.
-        y1 (int): The y coordinate of the starting point.
-        x2 (int): The x coordinate of the end point.
-        y2 (int): The y coordinate of the end point.
-        angle (int): The angle of the line.
-    """
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
+def draw_line_for_angle(screen: curses.window, x_start: int, y_start: int, x_end: int, y_end: int, angle: int):
+    """Bresenham's line algorithm. From internet"""
+    dx = abs(x_end - x_start)
+    dy = abs(y_end - y_start)
+    sx = 1 if x_start < x_end else -1
+    sy = 1 if y_start < y_end else -1
     err = dx - dy
 
     while True:
-        screen.addch(y1, x1, get_line_to_draw_angel(angle))
+        screen.addch(y_start, x_start, get_line_to_draw_angel(angle))
 
-        if x1 == x2 and y1 == y2:
+        if x_start == x_end and y_start == y_end:
             break
 
         e2 = 2 * err
         if e2 > -dy:
             err -= dy
-            x1 += sx
+            x_start += sx
         if e2 < dx:
             err += dx
-            y1 += sy
+            y_start += sy
 
 
 def get_line_to_draw_angel(angle: int):
-    """
-    returns the line of the arrow, based on the angle
-
-    Args:
-        angle (int): the angle, that needs to be drawn
-
-    Returns:
-        string: the line of the arrow to use, based on the angle
-    """
+    """returns the line character of the arrow, based on the angle."""
 
     normalized_angle = angle % 360
     index = round(normalized_angle / 45) % 8
@@ -241,15 +193,7 @@ def get_line_to_draw_angel(angle: int):
 
 
 def get_arrow_direction(angle: int):
-    """
-    returns the direction of the arrow, based on the angle
-
-    Args:
-        angle (int): the angle, that needs to be drawn
-
-    Returns:
-        string : Arrow pointing in the direction of the angle
-    """
+    """returns the character that points in the angles direction."""
 
     normalized_angle = angle % 360
     index = round(normalized_angle / 45) % 8
@@ -258,15 +202,7 @@ def get_arrow_direction(angle: int):
 
 
 def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original, playfield,  start_position):
-    """
-    Adds the start of the arrow to the playfield. The start is a bullet, representing the start of the arrow.
-
-    Args:
-        screen (curses.window): The screen to draw on
-        playfield_size_original (_type_): The size of the original playfield, before it got drawn on the screen
-        playfield (_type_): The playfield, the space  on the screen, where the playfield is getting drawn
-        start_position (_type_): The position of the start of the arrow
-    """
+    """Adds the start of the arrow to the playfield. The start is a bullet, representing the start of the arrow."""
 
     arrow_color_pair = Color_util.ARROW_START_COLOR
     # start_char = curses.ACS_BULLET | curses.A_BOLD
@@ -279,17 +215,8 @@ def add_arrow_start_to_playfield(screen: curses.window, playfield_size_original,
 
 
 def get_screen_position_from_playfield_position(playfield_size_original, playfield, position):
-    """
-    Converts a position in the playfield to a position on the screen
+    """Converts a position in the playfield to a position on the screen"""
 
-    Args:
-        playfield_size_original (_type_): The size of the original playfield, before it got drawn on the screen
-        playfield (_type_): the playfield, the space  on the screen, where the playfield is getting drawn
-        position (_type_): the position to be converted
-
-    Returns:
-        _type_: the position on the screen
-    """
     x = position[0]
     y = position[1]
 
@@ -337,12 +264,10 @@ def add_top_stats_to_playfield(screen: curses.window, score, size: Size):
         ('[S]ave', Color_util.SAVE_STAT_COLOR)
     ]
 
-    score_x = size.get_x_for_score()
-    score_y = size.get_y_for_score()
     score_y_offset = 0
 
     for text, color_pair in stats:
-        screen.addstr(score_x, score_y + score_y_offset, text, color_pair)
+        screen.addstr(size.X_SCORE, size.Y_SCORE + score_y_offset, text, color_pair)
         score_y_offset += len(text) + 1
 
 
@@ -394,18 +319,7 @@ def add_info_for_level(screen: curses.window, size: Size, info_list: list, input
 
 def add_scoll_bar_for_info(screen: curses.window, input: Input,
                            x_start: int, y_start: int, x_length: int, y_length: int):
-    """
-    Adds a scroll bar to the info box
-
-
-    Args:
-        screen (curses.window): _description_
-        input (Input): _description_
-        x_start (int): _description_
-        y_start (int): _description_
-        x_length (int): _description_
-        y_length (int): _description_
-    """
+    """Adds a scroll bar to the info box."""
 
     screen.addch(x_start + 1, y_start + y_length -
                  1, '┬')              # top Border
@@ -430,16 +344,7 @@ def add_scoll_bar_for_info(screen: curses.window, input: Input,
 
 
 def split_long_string(string, max_length: int):
-    """
-    splits a string into substring with a max_len
-
-    Args:
-        string (str): the string to split
-        max_length (int): the max_length the string should have
-
-    Returns:
-        _type_: list of new strings with the content of the old one
-    """
+    """splits a string into substring with a max_len."""
 
     substrings = []
     len_string = len(string)
@@ -475,17 +380,8 @@ def draw_full_lined_border(screen: curses.window, x_start: int, y_start: int, x_
                  curses.ACS_LRCORNER)  # Lower right corner
 
 
-def add_cheats_to_playfield(screen: curses.window,
-                            size: Size, playfield, playfield_size_original, trajectory: ArrowTrajectory):
-    """Adds the cheats to the playfield
-
-    Args:
-        screen (curses.window): the screen to draw on
-        size (Size): the size of the screen
-        playfield (Playfield): the playfield to draw
-        playfield_size_original (Size): the original size of the playfield
-        trajectory (ArrowTrajectory): the trajectory to draw
-    """
+def add_cheats_to_playfield(screen: curses.window, playfield, playfield_size_original, trajectory: ArrowTrajectory):
+    """Adds the cheats to the playfield"""
     if screen is None:
         logging.warning("Screen is not set")
         return
@@ -497,17 +393,8 @@ def add_cheats_to_playfield(screen: curses.window,
 def draw_full_lined_border_with_message(screen: curses.window,
                                         x_start: int, y_start, x_length: int, y_length,
                                         message: str, color_for_message: int = 0):
-    """
-    Draws a border around the screen and adds a message in the middle
+    """Draws a border around the screen and adds a message in the middle"""
 
-    Args:
-        screen (curses.window): the screen to draw on
-        x_start (int): the x start position of the border
-        y_start (int): the y start position of the border
-        x_length (int): the x length of the border
-        y_length (int): the y length of the border
-        message (str): the message to display in the middle
-    """
     draw_full_lined_border(screen, x_start, y_start, x_length, y_length)
     # box1 = screen.subwin(x_length, y_length, x_start, y_start)
     # box1.box()

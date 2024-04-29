@@ -12,8 +12,15 @@ class Size:
         screen = the screen object of curses \n
     """
 
-    def __init__(self, x: int, y: int, screen: curses.window, x_start=1, y_start=0):
-        self.set_new_size(x, y)
+    def __init__(self, screen: curses.window, x_start: int = 1, y_start: int = 0):
+        self.screen = screen
+        self.x = 10
+        self.y = 10
+        self.Y_SCORE = 5
+        self.X_SCORE = 0
+        self.menu_x_size = 10
+        self.x_verhältnis = 0.185
+        self.y_verhältnis = 1 - self.x_verhältnis
 
         if x_start < 0:
             logging.error("x_start is smaller then 1, setting it to 1")
@@ -25,52 +32,28 @@ class Size:
             y_start = 0
         self.y_start = y_start
 
-        self.screen = screen
-        self.menu_x_size = 10
-        self.x_verhältnis = 0.185
-        self.y_verhältnis = 0.815
+    def __str__(self):
+        return f"console_size: x= {self.x}, y= {self.y}"
 
     @classmethod
-    def from_terminal_size(cls, screen):
-        """ get the screen size and return new Size() object.
+    def from_terminal_size(cls, screen: curses.window):
+        """ get the screen size and return new Size() object."""
+        ret = cls(screen)
+        ret.update_terminal_size()
+        return ret
 
-        Args:
-            screen (_type_): screen (curses)
-
-        Returns:
-            new Size(): with x, y and screen set
-        """
-        rows, columns = screen.getmaxyx()
-        return cls(int(rows) - 2, int(columns) - 1, screen)
-
-    def set_new_size(self, x, y):
-        """ sets the new x and y values
-
-        Args:
-            x (int): new x value
-            y (int): new y value
-        """
+    def set_new_size(self, x: int, y: int):
+        """ sets the new x and y values"""
         if x < 10 or y < 10:
             logging.warning("x or y is smaller then 10, cant urn like this")
 
         self.x = x
         self.y = y
 
-    def update_terminal_size_with_logging_and_screen_refresh(self):
-        """
-        refreshed screen and udpates the console_size and logs the new x and y.
-        """
-
-        self.refresh_screen()
-        self.update_terminal_size_with_logging()
-
     def update_terminal_size_with_logging(self):
-        """
-        calls Size methode to update size and logs the new x and y values.
-        """
-
+        """calls Size methode to update size and logs the new x and y values."""
         self.update_terminal_size()
-        self.toLogging()
+        logging.info(self)
 
     def update_terminal_size_with_screen_refresh(self):
         """
@@ -82,11 +65,8 @@ class Size:
         self.update_terminal_size()
 
     def update_terminal_size(self):
-        """
-        Updates the screen x and y of the Console.
-        If smaller then 1 sets it to 1.
-        If screen is not set and still None, logs warning.
-        """
+        """Updates the screen x and y of the Console."""
+
         if self.screen is None:
             logging.warn("Cannot update, because screen is not set")
             return
@@ -98,54 +78,13 @@ class Size:
         self.set_new_size(rows, columns)
 
     def refresh_screen(self):
-        """
-        Refreshes the screen, if screen is None, logs warning.
-        """
+        """Refreshes the screen, if screen is None, logs warning."""
 
         if self.screen is None:
             logging.warning("Screen is None")
             return
 
         self.screen.refresh()
-
-    def get_x_start(self):
-        """ returns x_start, the x value where the playfield starts
-
-        Returns:
-            int: x_start
-        """
-
-        return self.x_start
-
-    def get_y_start(self):
-        """
-        returns y_start, the y value where the playfield starts
-
-        Returns:
-            int: y_start
-        """
-
-        return self.y_start
-
-    def get_x(self):
-        """
-        returns x, the x value of the playfield
-
-        Returns:
-            int: x
-        """
-
-        return self.x - self.x_start - self.menu_x_size
-
-    def get_y(self):
-        """
-        returns y, the y value of the playfield
-
-        Returns:
-            int: y
-        """
-
-        return self.y - self.y_start
 
     def calculate_playfield(self):
         """
@@ -160,7 +99,7 @@ class Size:
         max_x = self.get_x()
         max_y = self.get_y()
 
-        if max_x / (max_x + max_y) <= self.x_verhältnis:
+        if max_x / (max_x + max_y) < self.x_verhältnis:
             playfield_x = max_x
             playfield_y = min(int(max_x / self.x_verhältnis * self.y_verhältnis), max_y)
             playfield_y_start = int((max_y - playfield_y) / 2)
@@ -169,7 +108,7 @@ class Size:
         else:
             playfield_y = max_y
             playfield_x = min(int(max_y / self.y_verhältnis * self.x_verhältnis), max_x)
-            playfield_x_start = int((max_x - playfield_x) / 2)
+            playfield_x_start = max(int((max_x - playfield_x) / 2), 1)
             playfield_y_start = self.y_start
 
         return playfield_x_start, playfield_y_start, playfield_x, playfield_y
@@ -177,56 +116,22 @@ class Size:
     def is_playfield_x_smaller_then_x_verhältnis(self):
         return self.get_x() / (self.get_x() + self.get_y()) <= self.x_verhältnis
 
-    def get_x_for_angle(self):
-        """
+    def get_x(self):
+        """returns x, the x value of the playfield"""
+        return self.x - self.x_start - self.menu_x_size
 
-        """
+    def get_y(self):
+        """returns y, the y value of the playfield"""
+        return self.y - self.y_start
+
+    def get_x_for_angle(self):
         return self.get_x() + (self.menu_x_size // 2) + 1
 
     def get_y_for_angle(self):
-        """
-
-        """
-        return self.get_y_start() + (self.menu_x_size // 2) + 10
-
-    def get_x_for_score(self):
-        """
-
-        """
-        return 0
-
-    def get_y_for_score(self):
-        """
-
-        """
-        return 5
+        return self.y_start + (self.menu_x_size // 2) + 10
 
     def get_x_for_progress_bar(self):
-        """
-
-        """
         return self.get_x_for_angle()
 
     def get_y_for_progress_bar(self):
-        """
-
-        """
         return self.get_y_for_angle() + 20
-
-    def toLogging(self):
-        """
-        loggs info of the toString() aka. x and y values
-        """
-
-        logging.info(self.toString())
-
-    def toString(self):
-        """
-        return x and y
-
-        Returns:
-            string: x, y values
-        """
-
-        ret = f"console_size: x= {self.x}, y= {self.y}"
-        return ret
