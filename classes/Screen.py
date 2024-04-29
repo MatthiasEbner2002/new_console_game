@@ -14,14 +14,8 @@ interacts with the console and adds char and strings to the screen.
 
 
 def draw_borders(screen: curses.window, size: Size):
-    """
-    Draws the borders of the screen. If screen is None, logs warning.
+    """Draws the borders of the screen and info box borders."""
 
-
-    Args:
-        screen (): screen (curses)
-        size (Size): Size of the screen
-    """
     if screen is None:
         logging.warning("Screen is not set")
         return
@@ -29,33 +23,17 @@ def draw_borders(screen: curses.window, size: Size):
     # Get the size of the terminal
     height, width = screen.getmaxyx()
 
-    # Create a window with a border
-    y = size.get_y_for_border()
-    x = size.get_x_for_border()
-
     box1 = screen.subwin(height, width, 0, 0)
     box1.box()
 
     # Draw horizontal lines
-    for i in range(y):
-        # screen.addch(0, i, curses.ACS_HLINE)  # Top border line
-        # screen.addch(x, i, curses.ACS_HLINE)  # Bottom border line
-        screen.addch(x - size.menu_x_size, i, curses.ACS_HLINE)  # Menu line
+    for i in range(size.y):
+        screen.addch(size.x - size.menu_x_size, i, curses.ACS_HLINE)  # Menu line
 
-    # Draw vertical lines
-    # for i in range(x):
-    #    screen.addch(i, 0, curses.ACS_VLINE)  # Left border line
-    #    screen.addch(i, y, curses.ACS_VLINE)  # Right border line
-
-    # Draw corner characters
-    # screen.addch(0, 0, curses.ACS_ULCORNER)  # Upper left corner
-    # screen.addch(0, y, curses.ACS_URCORNER)  # Upper right corner
-    # screen.addch(x, 0, curses.ACS_LLCORNER)  # Lower left corner
-    # screen.addch(x - 1, y, curses.ACS_LRCORNER)  # Lower right corner
     # Menu line left corner
-    screen.addch(x - size.menu_x_size, 0, curses.ACS_LTEE)
+    screen.addch(size.x - size.menu_x_size, 0, curses.ACS_LTEE)
     # Menu line right corner
-    screen.addch(x - size.menu_x_size, y, curses.ACS_RTEE)
+    screen.addch(size.x - size.menu_x_size, size.y, curses.ACS_RTEE)
 
 
 def add_user_platform(screen: curses.window, size: Size):
@@ -369,10 +347,10 @@ def add_top_stats_to_playfield(screen: curses.window, score, size: Size):
 
 
 def add_info_for_level(screen: curses.window, size: Size, info_list: list, input: Input):
-    x_start = int(size.get_x_for_border() * 0.1)  # Start 10% from the left
-    y_start = int(size.get_y_for_border() * 0.1)  # Start 10% from the top
-    x_length = int(size.get_x_for_border() * 0.8)  # 80% of the width
-    y_length = int(size.get_y_for_border() * 0.8)  # 80% of the height
+    x_start = int(size.x * 0.1)  # Start 10% from the left
+    y_start = int(size.y * 0.1)  # Start 10% from the top
+    x_length = int(size.x * 0.8)  # 80% of the width
+    y_length = int(size.y * 0.8)  # 80% of the height
 
     draw_full_lined_border(
         screen=screen,

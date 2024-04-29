@@ -177,22 +177,6 @@ class Size:
     def is_playfield_x_smaller_then_x_verhältnis(self):
         return self.get_x() / (self.get_x() + self.get_y()) <= self.x_verhältnis
 
-    def get_x_for_border(self):
-        """ returns x for border, the biggest x possible
-
-        Returns:
-            _type_: _description_
-        """
-        return self.x
-
-    def get_y_for_border(self):
-        """ returns y for border, the biggest y possible
-
-        Returns:
-            _type_: _description_
-        """
-        return self.y
-
     def get_x_for_angle(self):
         """
 

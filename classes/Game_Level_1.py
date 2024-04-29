@@ -14,6 +14,7 @@ from classes.util.Color_util import Color_util
 
 
 class Game_Level_1:
+    """use run() to start the level"""
     def __init__(self, screen: curses.window):
 
         self.screen: curses.window = screen                     # Curses window object, handles screen refreshes
@@ -58,6 +59,10 @@ class Game_Level_1:
 
             # Draw the borders of the screen
             sc.draw_borders(self.screen, self.size)
+            # self.screen.refresh()
+            # time.sleep(1/60)
+            # continue
+
             # Draw the borders of the playfield
             self.playfield_size = sc.draw_playfield_borders(self.screen, self.size)
             # Draw the starting location of the arrow
@@ -88,14 +93,12 @@ class Game_Level_1:
 
                     self.screen.refresh()
 
-                    time.sleep(1 / 60)
-
                 case 1:  # Trajectory calculation
                     self.cheat_trajectory = None
                     sc.add_angle_to_playfield(self.screen, self.size, self.input.angle)
                     sc.add_power_to_playfield(self.screen, self.size, self.input.power, self.max_power)
                     self.step_for_trajectory()
-                    time.sleep(1 / 60)
+            time.sleep(1 / 60)
 
         logging.info("Game loop exited.")
 
